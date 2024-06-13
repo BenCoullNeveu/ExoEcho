@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ExoEcho"
+version = "0.0.1"
+authors = [
+    {name = "Ben Coull-Neveu", email = "benjamin.coull-neveu@mail.mcgill.ca"},
+]
+description = "To estimate the noise of various telescopes conducting exoplanet-related observations."
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["Ariel", "JWST", "Noise", "Telescope Noise", "Noise Estimate"]
+license = {file = "LICENSE"}
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Astronomy"
+]
+dependencies = [
+    "pandas>=1.1",
+    "numpy>=1.19",
+    "matplotlib>=3.3",
+    "astropy>=4.2",
+    "scipy>=1.5"
+]

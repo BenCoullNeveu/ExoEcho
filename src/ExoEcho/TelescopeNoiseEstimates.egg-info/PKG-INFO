@@ -1,0 +1,31 @@
+Metadata-Version: 2.1
+Name: TelescopeNoiseEstimates
+Version: 0.0.0
+Summary: To estimate the noise of various telescopes conducting exoplanet-related observations.
+Author-email: Ben Coull-Neveu <benjamin.coull-neveu@mail.mcgill.ca>
+License: Copyright (c) 2024, Ben Coull-Neveu
+        
+        Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, 
+        provided that the above copyright notice and this permission notice appear in all copies.
+        
+        THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF 
+        MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+        WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT 
+        OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+        
+Keywords: Ariel,JWST,Noise,Telescope Noise,Noise Estimate
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Scientific/Engineering :: Astronomy
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pandas>=1.1
+Requires-Dist: numpy>=1.19
+Requires-Dist: matplotlib>=3.3
+Requires-Dist: astropy>=4.2
+Requires-Dist: scipy>=1.5
+
+# TelescopeNoiseEstimates

@@ -1,0 +1,44 @@
+LICENSE
+README.md
+pyproject.toml
+src/ExoEcho/.gitignore
+src/ExoEcho/EclipseSim.ipynb
+src/ExoEcho/Functions.py
+src/ExoEcho/__init__.py
+src/ExoEcho/addTelescopes.ipynb
+src/ExoEcho/addTelescopes.py
+src/ExoEcho.egg-info/PKG-INFO
+src/ExoEcho.egg-info/SOURCES.txt
+src/ExoEcho.egg-info/dependency_links.txt
+src/ExoEcho.egg-info/requires.txt
+src/ExoEcho.egg-info/top_level.txt
+src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel AIRS-CH0, 1.95-3.9 microns, R=100).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel AIRS-CH1, 3.9-7.8 microns, R=100).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel NIRSpec, 1.1-1.95 microns, R=15).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRISS SOSS, 0.6-2.8 microns, R=700).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRSpec G395H, 0.6-5.3 microns, R=100).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRSpec, 0.6-5.3 microns, R=100).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates for Various Ariel Instruments (R15 and R100).png
+src/ExoEcho/Noise Estimate Plots/Noise Estimates for Various Ariel Instruments (R15 and R30).png
+src/ExoEcho/TelescopeNoiseEstimates.egg-info/PKG-INFO
+src/ExoEcho/TelescopeNoiseEstimates.egg-info/SOURCES.txt
+src/ExoEcho/TelescopeNoiseEstimates.egg-info/dependency_links.txt
+src/ExoEcho/TelescopeNoiseEstimates.egg-info/requires.txt
+src/ExoEcho/TelescopeNoiseEstimates.egg-info/top_level.txt
+src/ExoEcho/Telescopes/Ariel AIRS-CH0 1.95-3.9um R=100.csv
+src/ExoEcho/Telescopes/Ariel AIRS-CH0 1.95-3.9um R=30.csv
+src/ExoEcho/Telescopes/Ariel AIRS-CH1 3.9-7.8um R=100.csv
+src/ExoEcho/Telescopes/Ariel AIRS-CH1 3.9-7.8um R=30.csv
+src/ExoEcho/Telescopes/Ariel FGS1 0.6-0.8um R=1.csv
+src/ExoEcho/Telescopes/Ariel FGS2 0.8-1.1um R=1.csv
+src/ExoEcho/Telescopes/Ariel NIRSpec 1.1-1.95um R=15.csv
+src/ExoEcho/Telescopes/Ariel VISPhot 0.5-0.6um R=1.csv
+src/ExoEcho/Telescopes/JWST MIRI LRS 5.0-12.0um R=100.csv
+src/ExoEcho/Telescopes/JWST MIRI MRS 4.9-28.8um R=1500.csv
+src/ExoEcho/Telescopes/JWST NIRISS SOSS 0.6-2.8um R=700.csv
+src/ExoEcho/Telescopes/JWST NIRSpec 0.6-5.3um R=100.csv
+src/ExoEcho/Telescopes/JWST NIRSpec 0.6-5.3um R=1000.csv
+src/ExoEcho/Telescopes/JWST NIRSpec 0.6-5.3um R=2700.csv
+src/ExoEcho/Telescopes/JWST NIRSpec G395H 0.6-5.3um R=100.csv
+src/ExoEcho/target_lists/Ariel_MCS_Known_2024-03-27.csv
+src/ExoEcho/target_lists/Ariel_MCS_TPCs_2024-03-27.csv

@@ -1,0 +1,39 @@
+LICENSE
+README.md
+pyproject.toml
+src/.gitignore
+src/EclipseSim.ipynb
+src/Functions.py
+src/__init__.py
+src/addTelescopes.ipynb
+src/addTelescopes.py
+src/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel AIRS-CH0, 1.95-3.9 microns, R=100).png
+src/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel AIRS-CH1, 3.9-7.8 microns, R=100).png
+src/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel NIRSpec, 1.1-1.95 microns, R=15).png
+src/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRISS SOSS, 0.6-2.8 microns, R=700).png
+src/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRSpec G395H, 0.6-5.3 microns, R=100).png
+src/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRSpec, 0.6-5.3 microns, R=100).png
+src/Noise Estimate Plots/Noise Estimates for Various Ariel Instruments (R15 and R100).png
+src/Noise Estimate Plots/Noise Estimates for Various Ariel Instruments (R15 and R30).png
+src/TelescopeNoiseEstimates.egg-info/PKG-INFO
+src/TelescopeNoiseEstimates.egg-info/SOURCES.txt
+src/TelescopeNoiseEstimates.egg-info/dependency_links.txt
+src/TelescopeNoiseEstimates.egg-info/requires.txt
+src/TelescopeNoiseEstimates.egg-info/top_level.txt
+src/Telescopes/Ariel AIRS-CH0 1.95-3.9um R=100.csv
+src/Telescopes/Ariel AIRS-CH0 1.95-3.9um R=30.csv
+src/Telescopes/Ariel AIRS-CH1 3.9-7.8um R=100.csv
+src/Telescopes/Ariel AIRS-CH1 3.9-7.8um R=30.csv
+src/Telescopes/Ariel FGS1 0.6-0.8um R=1.csv
+src/Telescopes/Ariel FGS2 0.8-1.1um R=1.csv
+src/Telescopes/Ariel NIRSpec 1.1-1.95um R=15.csv
+src/Telescopes/Ariel VISPhot 0.5-0.6um R=1.csv
+src/Telescopes/JWST MIRI LRS 5.0-12.0um R=100.csv
+src/Telescopes/JWST MIRI MRS 4.9-28.8um R=1500.csv
+src/Telescopes/JWST NIRISS SOSS 0.6-2.8um R=700.csv
+src/Telescopes/JWST NIRSpec 0.6-5.3um R=100.csv
+src/Telescopes/JWST NIRSpec 0.6-5.3um R=1000.csv
+src/Telescopes/JWST NIRSpec 0.6-5.3um R=2700.csv
+src/Telescopes/JWST NIRSpec G395H 0.6-5.3um R=100.csv
+src/target_lists/Ariel_MCS_Known_2024-03-27.csv
+src/target_lists/Ariel_MCS_TPCs_2024-03-27.csv

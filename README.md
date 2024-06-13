@@ -17,7 +17,7 @@ To install ExoEcho, simply run the following command:
 pip install exoecho
 ```
 
-## Usage
+<!-- ## Usage
 
 Here's a quick example to get you started:
 
@@ -39,7 +39,7 @@ echoes = exoecho.detect_echoes(preprocessed_data)
 # Analyze and visualize the results
 exoecho.analyze(echoes)
 exoecho.visualize(echoes)
-```
+``` -->
 
 ## License
 

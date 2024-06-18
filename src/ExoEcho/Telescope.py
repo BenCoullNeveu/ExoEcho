@@ -6,6 +6,9 @@ import glob
 import os
 from Functions import *
 
+## Getting current directory
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+
 
 def replaceNanWithMean(dataframe:pd.DataFrame, column_name:str):
     dataframe[column_name] = dataframe[column_name].fillna(dataframe[column_name].mean()) # replace each nan value with the mean value
@@ -157,6 +160,16 @@ class Telescope:
                                                                                                                 self.diameter,
                                                                                                                 x["Star Distance [pc]"]),
                                                                                             axis=1)
+            
+            # calculating the full phase curve noise
+            self.table[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: noiseEstimate(x["Star Temperature [K]"],
+                                                                                                                                 *w_range,
+                                                                                                                                 self.throughput, 
+                                                                                                                                 x["Planet Period [days]"]*24*3600 + 3*x["Transit Duration [hrs]"]*3600, # Full period + x3 transit duration
+                                                                                                                                 x["Star Radius [Rs]"],
+                                                                                                                                 self.diameter,
+                                                                                                                                 x["Star Distance [pc]"]),
+                                                                                                           axis=1)
                 
             # calculating the ESM
             self.table[f"ESM Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
@@ -171,14 +184,20 @@ class Telescope:
             self.table[f"RSM Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Reflected Light Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
                                                                                        axis=1)
             
+            # calculating the SNR for full phase curves
+            self.table[f"Full Phase Curve SNR {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"],
+                                                                                               axis=1)
+            
         
         noiseDF = self.getParam("Noise Estimate")
         eclipseFluxDF = self.getParam("Eclipse Flux Ratio")
         transitFluxDF = self.getParam("Transit Flux Ratio")
         reflectionFluxDF = self.getParam("Reflected Light Flux Ratio")
+        phaseFluxDF = self.getParam("Full Phase Curve Noise Estimate")
         esmDF = self.getParam("ESM")
         tsmDF = self.getParam("TSM")
         rsmDF = self.getParam("RSM")
+        phaseSNRDF = self.getParam("Full Phase Curve SNR")
         
         # getting the path of this file
         dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -192,9 +211,11 @@ class Telescope:
         eclipseFluxDF.to_csv(telescope_path + "/Eclipse Flux.csv")
         transitFluxDF.to_csv(telescope_path + "/Transit FLux.csv")
         reflectionFluxDF.to_csv(telescope_path + "/Reflected Light Flux.csv")
+        phaseFluxDF.to_csv(telescope_path + "/Full Phase Curve Noise.csv")
         esmDF.to_csv(telescope_path + "/ESM.csv")
         tsmDF.to_csv(telescope_path + "/TSM.csv")
         rsmDF.to_csv(telescope_path + "/RSM.csv")
+        phaseSNRDF.to_csv(telescope_path + "/Full Phase Curve SNR.csv")
             
             
     
@@ -301,6 +322,12 @@ class Telescope:
         param_data = np.array([])
         param_columns = self.getColumns(param)
         
+        # validating param_columns (changing the noise columns depending on if it is for phase curves or not)
+        if "phase" in param.lower():
+            param_columns = [x for x in param_columns if "phase" in x.lower()]
+        else:
+            param_columns = [x for x in param_columns if "phase" not in x.lower()]
+        
         # input validation for parameter
         if param_columns == []:
             raise ValueError(f"No columns found for parameter {param}.")
@@ -340,11 +367,11 @@ class Telescope:
     
     
 ## --- Retrieving telescope --- ##
-def getTelescope(instrument_name:str):
+def getTelescope(instrument_name:str, directory:str=cur_dir):
     def normalize_name(name):
         return sorted(name.lower().replace(".csv", "").replace("-", " ").split())
     
-    telescope_dir = os.path.dirname(os.path.realpath(__file__)) + "/Telescopes"
+    telescope_dir = cur_dir + "/Telescopes"
     dir_list = os.listdir(telescope_dir)
     
     normalized_instrument_name = normalize_name(instrument_name)

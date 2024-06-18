@@ -334,7 +334,7 @@ def plotTieredPrecisionProfile(planet:str, ax:plt.Axes=None, xscale:str='log', y
                                tier1_linewidth:float=.5, tier2_linewidth:float=.5, tier3_linewidth:float=.5,
                                tier1_marker:str='.', tier2_marker:str='.', tier3_marker:str='.',
                                tier1_markersize:float=5, tier2_markersize:float=5, tier3_markersize:float=5, 
-                               trim_plot:bool=True, trim_amount:float=10):
+                               trim_plot:bool=True, trim_amount:float=10, observations:int=1):
     
     # check if ax is provided
     if ax is None:
@@ -351,9 +351,9 @@ def plotTieredPrecisionProfile(planet:str, ax:plt.Axes=None, xscale:str='log', y
 
 
     # plotting noise (what actually changes from tier to tier)
-    trim_data = plotParamProfile(planet, 'tier 1', "Noise Estimate", linestyle=tier1_linestyle, linewidth=tier1_linewidth, marker=tier1_marker, markersize=tier1_markersize, ax=ax, color=tier1_color, label='Noise at Tier 1 Spectral Resolution', return_data=True)
-    plotParamProfile(planet, 'tier 2', "Noise Estimate", linestyle=tier2_linestyle, linewidth=tier2_linewidth, marker=tier2_marker, markersize=tier2_markersize, ax=ax, color=tier2_color, label='Noise at Tier 2 Spectral Resolution')
-    plotParamProfile(planet, 'tier 3', "Noise Estimate", linestyle=tier3_linestyle, linewidth=tier3_linewidth, marker=tier3_marker, markersize=tier3_markersize, ax=ax, color=tier3_color, label='Noise at Tier 3 Spectral Resolution')
+    trim_data = plotParamProfile(planet, 'tier 1', "Noise Estimate", iterations=observations, linestyle=tier1_linestyle, linewidth=tier1_linewidth, marker=tier1_marker, markersize=tier1_markersize, ax=ax, color=tier1_color, label='Noise at Tier 1 Spectral Resolution', return_data=True)
+    plotParamProfile(planet, 'tier 2', "Noise Estimate", iterations=observations, linestyle=tier2_linestyle, linewidth=tier2_linewidth, marker=tier2_marker, markersize=tier2_markersize, ax=ax, color=tier2_color, label='Noise at Tier 2 Spectral Resolution')
+    plotParamProfile(planet, 'tier 3', "Noise Estimate", iterations=observations, linestyle=tier3_linestyle, linewidth=tier3_linewidth, marker=tier3_marker, markersize=tier3_markersize, ax=ax, color=tier3_color, label='Noise at Tier 3 Spectral Resolution')
     
     # trimming
     if trim_plot and trim_data is not None:
@@ -371,7 +371,11 @@ def plotTieredPrecisionProfile(planet:str, ax:plt.Axes=None, xscale:str='log', y
         ax.legend(loc=legend_loc)
 
     # title
-    title = f"{planet} Noise and Flux for Ariel at Different Tier Spectral Resolutions\n(Single Occultation)"
+    if observations == 1:
+        title = f"{planet} Noise and Flux for Ariel at Different Tier\nSpectral Resolutions (Single Occultation)"
+    else:
+        title = f"{planet} Noise and Flux for Ariel at Different Tier\nSpectral Resolutions ({observations} Occultations)"
+        
     ax.set_title(title, fontsize=14)
 
     # labels

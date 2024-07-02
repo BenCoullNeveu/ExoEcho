@@ -1,13 +1,32 @@
-import pandas as pd 
+import modin.pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 import glob
 import os
 from Functions import *
+from numba import jit
+from numba.experimental import jitclass
 
 ## Getting current directory
 cur_dir = os.path.dirname(os.path.realpath(__file__))
+telescopes = cur_dir + "/Telescopes/"
+target_lists = cur_dir + "/target_lists/"
+
+# Default target list
+default_target_list_name = "Ariel_MCS_Known_2024-03-27"
+target_list_name = default_target_list_name
+
+default_target_list = pd.read_csv(cur_dir + f"/target_lists/{default_target_list_name}.csv")
+target_list = pd.read_csv(cur_dir + f"/target_lists/{target_list_name}.csv")
+
+def setTargetList(target_list:str=default_target_list_name):
+    global target_list_name
+    target_list_name = target_list
+    
+def getTargetList():
+    return target_list_name, target_list
+
 
 
 def replaceNanWithMean(dataframe:pd.DataFrame, column_name:str):
@@ -20,6 +39,55 @@ def setPath(path):
     return path
 
 
+def openInstruments(telescope:str=None, show:bool=False):
+    full_dict = {}
+    
+    # if show:
+    #     print("________________________________________________________________\n"+
+    #           "Opening all instruments into dictionary object 'instruments'...\n")
+    
+    for tel in sorted(os.listdir(telescopes), key=str.lower):
+        if telescope is None or telescope == tel:
+        
+            if show:
+                print(tel)
+                
+            target_list_path = telescopes + tel + "/"
+            telescope_dict = {}
+            for target_list in sorted(os.listdir(target_list_path), key=str.lower):
+                
+                if show:
+                    print(f"  |--> {target_list}")
+                    
+                instrument_path = target_list_path + target_list + "/"
+                target_list_dict = {}
+                for instrument in sorted(os.listdir(instrument_path), key=str.lower):
+                    if show:
+                        print(f"             |--> {instrument}")
+                    target_list_dict[instrument] = getTelescope(instrument, target_list)
+                telescope_dict[target_list] = target_list_dict
+                
+                
+            full_dict[tel] = telescope_dict
+        
+    if show:
+        print("________________________________________________________________\n")
+        
+    return full_dict
+
+
+# class TelescopeList():
+#     def __init__(self, name:str, key:str, values:list):
+#         self.name = name
+#         self.key = key
+#         self.values = values
+        
+#     def nestedTelescopeList(self):
+#         for 
+        
+    
+
+# @jitclass
 class Telescope:
     """
     Represents a telescope used for astronomical observations.
@@ -77,10 +145,10 @@ class Telescope:
         print(transit_flux_ratio)
         # Output: A pandas DataFrame containing the "Transit Flux Ratio" values at the specified wavelength for each target in the table.
     """
-
-    target_list = pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/target_lists/Ariel_MCS_Known_2024-03-27.csv")
     
-    def __init__(self, name, diameter, wavelength_range, resolution, throughput, target_list:pd.DataFrame=target_list, table:pd.DataFrame=None, float_precision=7):
+    def __init__(self, name, diameter, wavelength_range, resolution, throughput, target_list:pd.DataFrame=None, 
+                 target_list_name:str=target_list_name, table:pd.DataFrame=None, float_precision=7):
+        
         self.name = name
         self.diameter = diameter
         self.wavelength_range = wavelength_range
@@ -89,10 +157,47 @@ class Telescope:
         self.target_list = target_list
         self.float_precision = float_precision
         
+        self.target_list_dir = os.path.dirname(os.path.realpath(__file__)) + "/target_lists/"
+        self.target_list_name = target_list_name
+        
+        # loading target list
+        if target_list is None:
+            try:
+                target_list = pd.read_csv(self.target_list_dir + f"{target_list_name}.csv")
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Target list {target_list_name}.csv not found in the target_lists directory. Please choose an available target list or add a custom one directly as a target_list argument (should be a pd.DataFrame object).")
+            except:
+                raise ValueError("An error occurred while trying to load the target list. Please ensure that the target list is in the correct format and that the file exists.")
+        
+        elif self.target_list_name == "Ariel_MCS_Known_2024-03-27":
+            self.target_list_name = None
+            custom_counter = 0
+            for filename in os.listdir(self.target_list_dir):
+                if target_list.equals(pd.read_csv(os.path.join(self.target_list_dir, filename))):
+                    self.target_list_name = filename.split(".csv")[0]
+                    if "Custome Target List" in filename:
+                        custom_counter += 1
+                    break
+            if self.target_list_name is None:
+                self.target_list_name = f"Custom Target List {custom_counter}".replace(' 0', '')
+                self.target_list.to_csv(self.target_list_dir + self.target_list_name + ".csv")
+                
+        self.target_list = target_list    
+        
         if table is not None:
             self.table = table
         else:
             self.table = "Run 'constructTable' method to build table."
+            
+            
+        self.__vCalculateParams__ = np.vectorize(self.__calculateParams__, signature='(n)->()') # vectorizing the calculateParams method for faster calculations
+            
+    
+    def __str__(self):
+        return self.info()
+            
+    def info(self):
+        return f"Telescope: {self.name}\nDiameter: {self.diameter} m\nWavelength Range: {self.wavelength_range[0]} - {self.wavelength_range[1]} microns\nResolution: {self.resolution}\nThroughput: {self.throughput}\nTarget List: {self.target_list_name}"
 
     def constructRanges(self):
         while round((self.wavelength_range[1] - self.wavelength_range[0]), self.float_precision) == 0:
@@ -103,90 +208,137 @@ class Telescope:
         wall = self.wavelength_range[0]
         for i in range(self.resolution):
             new_wall = wall+2*sep
-            arr.append(tuple([round(wall, self.float_precision), round(wall+2*sep, self.float_precision)]))
+            arr.append(np.array([round(wall, self.float_precision), round(wall+2*sep, self.float_precision)]))
             wall = new_wall
         return arr
     
     # helper function
     def getColumns(self, column_name:str):
+        if 'noise' == column_name.lower().split()[0]:
+            return [x for x in self.table if column_name.lower().split()[0] == x.lower().split()[0]]
         return [x for x in self.table if column_name.lower() in x.lower()]
     
+    
+    def __calculateParams__(self, w_range): #pass in the array containing all w_ranges to the vectorized function.
+        w_range = pd.Series(self.table.shape[0] * [w_range])
+        w_range_name = f"{w_range[0][0]}-{w_range[0][1]}um"
+        # calculating the eclipse flux ratio
+        self.table[f"Eclipse Flux Ratio {w_range_name}"] = v_eclipseFlux(self.table["Planet Radius [Rjup]"],
+                            self.table["Star Radius [Rs]"],
+                            w_range,
+                            self.table["Dayside Emitting Temperature [K]"],
+                            self.table["Star Temperature [K]"])
+        
+        # calculating the transit flux ratio
+        self.table[f"Transit Flux Ratio {w_range_name}"] = v_transitFlux(self.table["Planet Radius [Rjup]"],
+                                                self.table["Star Radius [Rs]"],
+                                                self.table["Planet Mass [Mjup]"],
+                                                self.table["Dayside Emitting Temperature [K]"],
+                                                self.table["Mean Molecular Weight"])
+        
+        # calculating the reflected light flux
+        self.table[f"Reflected Light Flux Ratio {w_range_name}"] = v_reflectionFlux(self.table["Planet Radius [Rjup]"],
+                                                        self.table["Planet Semi-major Axis [au]"],
+                                                        self.table["Planet Albedo"])
+        
+        # calculating the noise
+        self.table[f"Noise Estimate {w_range_name}"] = v_noiseEstimate(self.table["Star Temperature [K]"],
+                                                w_range,
+                                                self.throughput, 
+                                                3*self.table["Transit Duration [hrs]"]*3600, # x3 Transit duration
+                                                self.table["Star Radius [Rs]"],
+                                                self.diameter,
+                                                self.table["Star Distance [pc]"])
+        
+        # calculating the full phase curve noise
+        self.table[f"Full Phase Curve Noise Estimate {w_range_name}"] = v_noiseEstimate(self.table["Star Temperature [K]"],
+                                                    w_range,
+                                                    self.throughput, 
+                                                    self.table["Planet Period [days]"]*24*3600 + 3*self.table["Transit Duration [hrs]"]*3600, # Full period + x3 transit duration
+                                                    self.table["Star Radius [Rs]"],
+                                                    self.diameter,
+                                                    self.table["Star Distance [pc]"])
+        
+        # calculating the ESM
+        self.table[f"ESM Estimate {w_range_name}"] = self.table[f"Eclipse Flux Ratio {w_range_name}"] / self.table[f"Noise Estimate {w_range_name}"]
+        
+        # calculating the TSM
+        self.table[f"TSM Estimate {w_range_name}"] = self.table[f"Transit Flux Ratio {w_range_name}"] / self.table[f"Noise Estimate {w_range_name}"]
+        
+        # calculating the RSM
+        self.table[f"RSM Estimate {w_range_name}"] = self.table[f"Reflected Light Flux Ratio {w_range_name}"] / self.table[f"Noise Estimate {w_range_name}"]
+        
+        # calculating the SNR for full phase curves
+        self.table[f"Full Phase Curve SNR {w_range_name}"] = self.table[f"Eclipse Flux Ratio {w_range_name}"] / self.table[f"Full Phase Curve Noise Estimate {w_range_name}"]
     
     
     def constructTable(self):
         self.table = self.target_list.copy() # for calculations
         
         # calculating the Tday
-        self.table["Dayside Emitting Temperature [K]"] = self.table.apply(lambda x: Tday(x["Star Temperature [K]"], 
-                                                                                        x["Star Radius [Rs]"],
-                                                                                        x["Planet Semi-major Axis [au]"],
-                                                                                        x["Planet Albedo"],
-                                                                                        x["Heat Redistribution Factor"]),
-                                                                        axis=1)
+        self.table["Dayside Emitting Temperature [K]"] = Tday(self.table["Star Temperature [K]"], 
+                                                                self.table["Star Radius [Rs]"],
+                                                                self.table["Planet Semi-major Axis [au]"],
+                                                                self.table["Planet Albedo"],
+                                                                self.table["Heat Redistribution Factor"])
         
        
         arr = self.constructRanges() # getting wavelength ranges based on resolution
         replaceNanWithMean(self.table, "Transit Duration [hrs]") # replacing all NaN transit duration values with the mean value of the column
         
-        for w_range in arr:
-            # calculating the eclipse flux ratio
-            self.table[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: eclipseFlux(x["Planet Radius [Rjup]"],
-                                                                                                                x["Star Radius [Rs]"],
-                                                                                                                w_range,
-                                                                                                                x["Dayside Emitting Temperature [K]"],
-                                                                                                                x["Star Temperature [K]"]),
-                                                                                            axis=1)
+        self.__vCalculateParams__(arr)
+        
+        # for w_range in arr:
+        #     w_range = pd.Series(self.table.shape[0] * [w_range])
+        #     # calculating the eclipse flux ratio
+        #     self.table[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] = v_eclipseFlux(self.table["Planet Radius [Rjup]"],
+        #                         self.table["Star Radius [Rs]"],
+        #                         w_range,
+        #                         self.table["Dayside Emitting Temperature [K]"],
+        #                         self.table["Star Temperature [K]"])
             
-            # calculating the transit flux ratio
-            self.table[f"Transit Flux Ratio {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: transitFlux(x["Planet Radius [Rjup]"],
-                                                                                                                   x["Star Radius [Rs]"],
-                                                                                                                   x["Planet Mass [Mjup]"],
-                                                                                                                   x["Dayside Emitting Temperature [K]"],
-                                                                                                                   x["Mean Molecular Weight"]),
-                                                                                             axis=1)
+        #     # calculating the transit flux ratio
+        #     self.table[f"Transit Flux Ratio {w_range[0]}-{w_range[1]}um"] = v_transitFlux(self.table["Planet Radius [Rjup]"],
+        #                                            self.table["Star Radius [Rs]"],
+        #                                            self.table["Planet Mass [Mjup]"],
+        #                                            self.table["Dayside Emitting Temperature [K]"],
+        #                                            self.table["Mean Molecular Weight"])
             
-            # calculating the reflected light flux
-            self.table[f"Reflected Light Flux Ratio {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: reflectionFlux(x["Planet Radius [Rjup]"],
-                                                                                                                              x["Planet Semi-major Axis [au]"],
-                                                                                                                              x["Planet Albedo"]),
-                                                                                                     axis=1)
+        #     # calculating the reflected light flux
+        #     self.table[f"Reflected Light Flux Ratio {w_range[0]}-{w_range[1]}um"] = v_reflectionFlux(self.table["Planet Radius [Rjup]"],
+        #                                                   self.table["Planet Semi-major Axis [au]"],
+        #                                                   self.table["Planet Albedo"])
             
-            # calculating the noise
-            self.table[f"Noise Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: noiseEstimate(x["Star Temperature [K]"],
-                                                                                                                *w_range,
-                                                                                                                self.throughput, 
-                                                                                                                3*x["Transit Duration [hrs]"]*3600, # x3 Transit duration
-                                                                                                                x["Star Radius [Rs]"],
-                                                                                                                self.diameter,
-                                                                                                                x["Star Distance [pc]"]),
-                                                                                            axis=1)
+        #     # calculating the noise
+        #     self.table[f"Noise Estimate {w_range[0]}-{w_range[1]}um"] = v_noiseEstimate(self.table["Star Temperature [K]"],
+        #                                           w_range,
+        #                                           self.throughput, 
+        #                                           3*self.table["Transit Duration [hrs]"]*3600, # x3 Transit duration
+        #                                           self.table["Star Radius [Rs]"],
+        #                                           self.diameter,
+        #                                           self.table["Star Distance [pc]"])
             
-            # calculating the full phase curve noise
-            self.table[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: noiseEstimate(x["Star Temperature [K]"],
-                                                                                                                                 *w_range,
-                                                                                                                                 self.throughput, 
-                                                                                                                                 x["Planet Period [days]"]*24*3600 + 3*x["Transit Duration [hrs]"]*3600, # Full period + x3 transit duration
-                                                                                                                                 x["Star Radius [Rs]"],
-                                                                                                                                 self.diameter,
-                                                                                                                                 x["Star Distance [pc]"]),
-                                                                                                           axis=1)
-                
-            # calculating the ESM
-            self.table[f"ESM Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
-                                                                                        axis=1)
+        #     # calculating the full phase curve noise
+        #     self.table[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"] = v_noiseEstimate(self.table["Star Temperature [K]"],
+        #                                                 w_range,
+        #                                                 self.throughput, 
+        #                                                 self.table["Planet Period [days]"]*24*3600 + 3*self.table["Transit Duration [hrs]"]*3600, # Full period + x3 transit duration
+        #                                                 self.table["Star Radius [Rs]"],
+        #                                                 self.diameter,
+        #                                                 self.table["Star Distance [pc]"])
+            
+        #     # calculating the ESM
+        #     self.table[f"ESM Estimate {w_range[0]}-{w_range[1]}um"] = self.table[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / self.table[f"Noise Estimate {w_range[0]}-{w_range[1]}um"]
             
             
-            # calculating the TSM
-            self.table[f"TSM Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Transit Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
-                                                                                       axis=1)
+        #     # calculating the TSM
+        #     self.table[f"TSM Estimate {w_range[0]}-{w_range[1]}um"] = self.table[f"Transit Flux Ratio {w_range[0]}-{w_range[1]}um"] / self.table[f"Noise Estimate {w_range[0]}-{w_range[1]}um"]
             
-            # calculating the RSM
-            self.table[f"RSM Estimate {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Reflected Light Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
-                                                                                       axis=1)
+        #     # calculating the RSM
+        #     self.table[f"RSM Estimate {w_range[0]}-{w_range[1]}um"] = self.table[f"Reflected Light Flux Ratio {w_range[0]}-{w_range[1]}um"] / self.table[f"Noise Estimate {w_range[0]}-{w_range[1]}um"]
             
-            # calculating the SNR for full phase curves
-            self.table[f"Full Phase Curve SNR {w_range[0]}-{w_range[1]}um"] = self.table.apply(lambda x: x[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"],
-                                                                                               axis=1)
+        #     # calculating the SNR for full phase curves
+        #     self.table[f"Full Phase Curve SNR {w_range[0]}-{w_range[1]}um"] = self.table[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / self.table[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"]
             
         
         noiseDF = self.getParam("Noise Estimate")
@@ -203,19 +355,19 @@ class Telescope:
         dir_path = os.path.dirname(os.path.realpath(__file__))
         
         # setting the path for all telescope data
-        telescope_path = setPath(dir_path + f"/Telescopes/{self.name} {self.wavelength_range[0]}-{self.wavelength_range[1]}um D={self.diameter} R={self.resolution} tau={self.throughput}")
+        telescope_path = setPath(dir_path + f"/Telescopes/{self.name.split()[0]}/{self.target_list_name}/{self.name} {self.wavelength_range[0]}-{self.wavelength_range[1]}um D={self.diameter} R={self.resolution} tau={self.throughput}")
         
         # saving telescope data
-        self.target_list.to_csv(telescope_path + "/Target List.csv")
-        noiseDF.to_csv(telescope_path + "/Noise.csv")
-        eclipseFluxDF.to_csv(telescope_path + "/Eclipse Flux.csv")
-        transitFluxDF.to_csv(telescope_path + "/Transit FLux.csv")
-        reflectionFluxDF.to_csv(telescope_path + "/Reflected Light Flux.csv")
-        phaseFluxDF.to_csv(telescope_path + "/Full Phase Curve Noise.csv")
-        esmDF.to_csv(telescope_path + "/ESM.csv")
-        tsmDF.to_csv(telescope_path + "/TSM.csv")
-        rsmDF.to_csv(telescope_path + "/RSM.csv")
-        phaseSNRDF.to_csv(telescope_path + "/Full Phase Curve SNR.csv")
+        # self.target_list.to_parquet(telescope_path + "/Target List.parquet")
+        noiseDF.to_parquet(telescope_path + "/Noise.parquet")
+        eclipseFluxDF.to_parquet(telescope_path + "/Eclipse Flux.parquet")
+        transitFluxDF.to_parquet(telescope_path + "/Transit FLux.parquet")
+        reflectionFluxDF.to_parquet(telescope_path + "/Reflected Light Flux.parquet")
+        phaseFluxDF.to_parquet(telescope_path + "/Full Phase Curve Noise.parquet")
+        esmDF.to_parquet(telescope_path + "/ESM.parquet")
+        tsmDF.to_parquet(telescope_path + "/TSM.parquet")
+        rsmDF.to_parquet(telescope_path + "/RSM.parquet")
+        phaseSNRDF.to_parquet(telescope_path + "/Full Phase Curve SNR.parquet")
             
             
     
@@ -246,9 +398,14 @@ class Telescope:
             temp_table = self.table[[*self.getColumns(param)]]
             
             if 'noise' in param.lower():
-                temp_table = temp_table.apply(lambda x: x*(iterations)**(-.5), axis=1)
-            elif param.lower() in ['esm', 'tsm', 'rsm']:
-                temp_table = temp_table.apply(lambda x: x*(iterations)**(.5), axis=1)
+                temp_table *= (iterations ** (-0.5))
+            elif param.lower() in ['esm', 'tsm', 'rsm', 'full phase curve snr']:
+                temp_table *= (iterations ** 0.5)
+                
+            # if 'noise' in param.lower():
+            #     temp_table = temp_table.apply(lambda x: x*(iterations)**(-.5), axis=1)
+            # elif param.lower() in ['esm', 'tsm', 'rsm', 'full phase curve snr']:
+            #     temp_table = temp_table.apply(lambda x: x*(iterations)**(.5), axis=1)
             
             if names:
                 return pd.concat([self.table[["Planet Name"]], temp_table], axis=1)
@@ -288,7 +445,10 @@ class Telescope:
 
     ## --- Specific param methods --- ##
     def getNoise(self, wavelength=None, iterations=1, names=True):
-        return self.getParam("Noise Estimate", wavelength, iterations, names=names)
+        return self.getParam("Noise", wavelength, iterations, names=names)
+    
+    def getFPCNoise(self, wavelength=None, iterations=1, names=True):
+        return self.getParam("Full Phase Curve Noise", wavelength, iterations, names=names)
 
     def getEFlux(self, wavelength=None, names=True):
         return self.getParam("Eclipse Flux Ratio", wavelength, names=names)
@@ -307,6 +467,9 @@ class Telescope:
     
     def getRSM(self, wavelength=None, iterations=1, names=True):
         return self.getParam("RSM", wavelength, iterations, names=names)
+    
+    def getFPCSM(self, wavelength=None, iterations=1, names=True):
+        return self.getParam("Full Phase Curve SNR", wavelength, iterations, names=names)
     
     
     # list of planets
@@ -367,11 +530,36 @@ class Telescope:
     
     
 ## --- Retrieving telescope --- ##
-def getTelescope(instrument_name:str, directory:str=cur_dir):
-    def normalize_name(name):
+def normalize_name(name):
         return sorted(name.lower().replace(".csv", "").replace("-", " ").split())
     
-    telescope_dir = cur_dir + "/Telescopes"
+def getTelescope(instrument_name:str, target_list_name:str=target_list_name, current_directory:str=cur_dir):
+    
+    
+    # ensuring target_list_name is in the correct format
+    target_list_name = target_list_name.replace(".csv", "")
+    
+    
+    # getting the telescope
+    try:
+        telescope_dir = current_directory + f"/Telescopes/{instrument_name.split()[0]}/"
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Telescope {instrument_name.split()[0]} not found in the Telescopes directory. Please choose an available telescope or add a custom one directly. Ensure that the first word for instrument name is the telescope name and is spaced from the rest of the words.\n"
+                                + "Example: 'Ariel [instrument name]', or 'Hubble [instrument name]'. NOT -> '[instrument name] Ariel', or even 'Ariel[instrument name]."
+                                + "\nAvailable telescopes are: " + str(os.listdir(current_directory + "/Telescopes")))
+    except:
+        raise ValueError("An error occurred while trying to load the telescope. Please ensure that the telescope is in the correct format and that the file exists.")
+    
+    # getting the target list for the telescope
+    try:
+        telescope_dir += f"{target_list_name}/"
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Target list {target_list_name} not found in the Telescopes directory. Please choose an available target list or add a custom one directly."
+                                + "/nAvailable target lists are: {os.listdir(current_directory + '/Telescopes')}")
+    except:
+        raise ValueError("An error occurred while trying to load the target list. Please ensure that the target list is in the correct format and that the file exists.")
+    
+    # getting telescope directory list
     dir_list = os.listdir(telescope_dir)
     
     normalized_instrument_name = normalize_name(instrument_name)
@@ -381,6 +569,7 @@ def getTelescope(instrument_name:str, directory:str=cur_dir):
         normalized_telescope_name = normalize_name(telescope)
 
         is_in = all(word in normalized_telescope_name for word in normalized_instrument_name)
+        # is_in = check_all(normalized_telescope_name, normalized_instrument_name)
                 
         if is_in:
             if desired_telescope != '':
@@ -404,12 +593,12 @@ def getTelescope(instrument_name:str, directory:str=cur_dir):
     # Fetching the directory of the desired telescope
     sub_dir = os.path.join(telescope_dir, desired_telescope)
     
-    # Fetching all CSV files in the directory
-    csv_files = glob.glob(os.path.join(sub_dir, "*.csv"))
-    # Combining CSV files into a single dataframe
+    # Fetching all parquet files in the directory
+    files = glob.glob(os.path.join(sub_dir, "*.parquet"))
+    # Combining parquet files into a single dataframe
     dfs = []
-    for file in csv_files:
-        df = pd.read_csv(file)
+    for file in files:
+        df = pd.read_parquet(file)
         dfs.append(df)
         
     # Table
@@ -419,16 +608,31 @@ def getTelescope(instrument_name:str, directory:str=cur_dir):
         table = table.loc[:, ~table.columns.str.contains('^Unnamed')] # removing unnamed columns
     except:
         pass
+ 
+    
+    # adding SNRs to table
+    # w_ranges = [x.split()[-1].replace("um", "").split('-') for x in table.columns if 'eclipse flux' in x.lower()]
+    # for w_range in w_ranges:
+    #     table[f"ESM Estimate {w_range[0]}-{w_range[1]}um"] = table.apply(lambda x: x[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
+    #                                                                             axis=1)
+    #     table[f"TSM Estimate {w_range[0]}-{w_range[1]}um"] = table.apply(lambda x: x[f"Transit Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
+    #                                                                                 axis=1)
+    #     table[f"RSM Estimate {w_range[0]}-{w_range[1]}um"] = table.apply(lambda x: x[f"Reflected Light Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Noise Estimate {w_range[0]}-{w_range[1]}um"],
+    #                                                                                 axis=1)
+    #     table[f"Full Phase Curve SNR {w_range[0]}-{w_range[1]}um"] = table.apply(lambda x: x[f"Eclipse Flux Ratio {w_range[0]}-{w_range[1]}um"] / x[f"Full Phase Curve Noise Estimate {w_range[0]}-{w_range[1]}um"],
+    #                                                                                     axis=1)
     
     # Target list
-    target_list = pd.read_csv(os.path.join(sub_dir, "Target List.csv"))
+    string = os.path.join(current_directory, "target_lists", f"{target_list_name}.csv")
+    target_list = pd.read_csv(string)
     try:
         target_list = target_list.loc[:, ~target_list.columns.str.contains('^Unnamed')] # removing unnamed columns
     except:
         pass
     
     # Making the telescope object
-    telescope = Telescope(name, diameter, wavelength_range, resolution, throughput, target_list, table)
+    telescope = Telescope(name=name, diameter=diameter, wavelength_range=wavelength_range, resolution=resolution, 
+                          throughput=throughput, target_list=target_list, target_list_name=target_list_name, table=table)
     
     return telescope
 
@@ -456,45 +660,3 @@ def getPlanet(df:pd.DataFrame, planet:str, use_indexing:bool=False):
         raise ValueError(f"Planet '{planet}' not found in dataframe. Available planets are: {list(df['Planet Name'])}")
     else:
         return planetdf
-
-
-# def plotNoise(df, system_name=None, fill_between=False, ax=None, savepath=None):
-#     if system_name is None:
-#         raise ValueError("Please include a system_name for title.")
-    
-#     if ax is None:
-#         fig, ax = plt.subplots()
-        
-#     wavelengths = np.array([])
-#     stds = np.array([])
-#     means = np.array([])
-#     noise_columns = getNoiseColumns(df)
-#     for column in noise_columns:
-#         w_range = column.split()[-1].replace('um', '').split('-')
-        
-#         wavelengths = np.append(wavelengths, round((float(w_range[1]) + float(w_range[0])) / 2, 3))
-#         stds = np.append(stds, df[column].std())
-#         means = np.append(means, df[column].mean())
-        
-#     if fill_between:
-#         ax.fill_between(wavelengths, means-stds, means+stds, alpha=.3, zorder=3)
-#         ax.scatter(wavelengths, means, marker='.', color='blue', zorder=3)
-#     else:
-#         ax.errorbar(wavelengths, means, yerr=stds, fmt='o', c='black', capsize=3, zorder=3)
-        
-#     ax.set_ylabel("Noise Estimate")
-#     ax.set_xlabel("Wavelength [microns]")
-    
-#     ax.grid(which="major", alpha=.4, zorder=0)
-#     ax.grid(which="minor", alpha=.1, linestyle="-.", zorder=0)
-#     ax.minorticks_on()
-    
-#     senstivity_range = getRange(df)
-#     title=f"Noise Estimates at Various Wavelengths\n{system_name}, {senstivity_range[0]}-{senstivity_range[1]} $\mu m$, R={len(noise_columns)})"
-#     ax.set_title(title)
-    
-#     if savepath is not None:
-#         plt.savefig(savepath + "/" + title.replace("\n", " ").replace("$\mu m$", "microns") + ".png", bbox_inches='tight', dpi=300)
-        
-
-

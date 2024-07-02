@@ -3,6 +3,7 @@ import pandas as pd
 from astropy import constants as const
 from astropy import units as u
 import scipy.integrate as integrate
+from numba import jit, float64
 
 #-----# CONSTANTS #-----#
 h = const.h.value # Planck constant
@@ -27,11 +28,11 @@ def getConversion(units):
     elif units in ["pc", "PC"]:
         return const.pc.value
     elif units in ["m"]:
-       return 1
+       return 1.0
     elif units in ["um", "microns"]:
-        return 1E-6
+        return 1.0E-6
     elif units in ["nm"]:
-        return 1E-9
+        return 1.0E-9
     elif units in ["M_jup", "Mj", "M_j", "Mjup"]:
         return const.M_jup.value
     elif units in ["M_sun", "Ms", "M_s"]:
@@ -62,6 +63,9 @@ def planckFunc(wavelength:float,temperature:float, wavelength_units:str="um", h:
     exponent = h*c/((w_conversion*wavelength)*k_B*temperature)
     return 2 * h * c ** 2 / ((w_conversion*wavelength) ** 5) / (np.exp(exponent) - 1)
 
+v_planckFunc = np.vectorize(planckFunc)
+v_planckFunc.__doc__ = "Vectorized version of the function planckFunc."
+
 
 # dayside emitting temperature
 def Tday(T_star:float, R_star:float, a:float, Ab:float=0.3, E:float=0.2, R_units:str="R_sun", a_units:str="AU")->float:
@@ -90,6 +94,9 @@ def Tday(T_star:float, R_star:float, a:float, Ab:float=0.3, E:float=0.2, R_units
     
     return T_star * (np.sqrt((R_star*R_conversion)/(a*a_conversion))) * ((1-Ab)*(2/3-E*5/12))**0.25
 
+v_Tday = np.vectorize(Tday)
+v_Tday.__doc__ = "Vectorized version of the function Tday."
+
 
 # thermal contrast ratio
 def eclipseFlux(Rp:float, R_star:float, wavelength:float, tday:float, teff:float, Rp_units:str="R_jup", R_star_units:str="R_sun", wavelength_units:str="um")->float:
@@ -109,7 +116,7 @@ def eclipseFlux(Rp:float, R_star:float, wavelength:float, tday:float, teff:float
         float: Resulting thermal contrast ratio.
     """
     
-    if type(wavelength) in [float, int]:
+    if type(wavelength) in [float, int, np.int_, np.float_]:
         radius_ratio = ( (Rp*getConversion(Rp_units)) / (R_star*getConversion(R_star_units)) )**2
         planck_function_planet = planckFunc(wavelength, tday, wavelength_units)
         planck_function_star = planckFunc(wavelength, teff, wavelength_units)
@@ -126,7 +133,10 @@ def eclipseFlux(Rp:float, R_star:float, wavelength:float, tday:float, teff:float
         return I[0] / abs(wavelength[0] - wavelength[1])  # Average over the wavelength range
             
     except:
-        raise Exception("wavelength must be of type float or list-like with length 2.")
+        raise Exception(f"wavelength must be of type float or list-like with length 2. Received type: {wavelength} which is of type {type(wavelength)}.")
+    
+v_eclipseFlux = np.vectorize(eclipseFlux)
+v_eclipseFlux.__doc__ = "Vectorized version of the function eclipseFlux."
         
 # transit flux ratio
 def transitFlux(Rp:float, R_star:float, Mp:float, T:float, mu:float, Nh:float=4, Rp_units:str="R_jup", R_star_units:str="R_sun", Mp_units:str="M_jup")->float:
@@ -154,6 +164,9 @@ def transitFlux(Rp:float, R_star:float, Mp:float, T:float, mu:float, Nh:float=4,
     H = k_B * T / (mu*m_p * g)
     return 2 * Rp * Nh * H / R_star**2
 
+v_transitFlux = np.vectorize(transitFlux)
+v_transitFlux.__doc__ = "Vectorized version of the function transitFlux."
+
 
 # reflected light contrast
 def reflectionFlux(Rp:float, a:float, Ag:float, Rp_units:str="R_jup", a_units:str="au")->float:
@@ -170,18 +183,20 @@ def reflectionFlux(Rp:float, a:float, Ag:float, Rp_units:str="R_jup", a_units:st
         float: reflected light contrast.
     """
     return Ag * (Rp*getConversion(Rp_units) / (a*getConversion(a_units)))**2
+
+v_reflectionFlux = np.vectorize(reflectionFlux)
+v_reflectionFlux.__doc__ = "Vectorized version of the function reflectionFlux."
    
    
 # Number of photons
-def NPhotons(T_star:float, lambda1:float, lambda2:float, throughput:float, 
+def NPhotons(T_star:float, wavelengths:tuple[float], throughput:float, 
              integration_time:float, R_star:float, D_telescope:float, distance:float=20,
              wavelength_units:str="um", R_star_units:str="R_sun", distance_units="pc")->float:
     """Returns the number of photons collected by a telescope system. 
 
     Args:
         T_star (float): Stellar temperature, in K.
-        lambda1 (float): Lower bound wavelength (i.e., minimum wavelength that system observes).
-        lambda2 (float): Upper bound wavelength (i.e., maximum wavelength that system observes).
+        wavelengths (tuple[float]): Lower and upper wavelength bounds (i.e., minimum and maxiomum wavelengths that system observes).
         throughput (float): System throughput (i.e., number of electrons out per photon in).
         integration_time (float): Total observation time, in s.
         R_star (float): Stellar radius, in units given by R_star_units.
@@ -197,23 +212,25 @@ def NPhotons(T_star:float, lambda1:float, lambda2:float, throughput:float,
     def planckInt(wavelength, T_star, wavelength_units):
         return planckFunc(wavelength, T_star, wavelength_units) * wavelength * getConversion(wavelength_units)
     
-    lambda1 *= getConversion(wavelength_units)
-    lambda2 *= getConversion(wavelength_units)
+    lambda1 = wavelengths[0] * getConversion(wavelength_units)
+    lambda2 = wavelengths[1] * getConversion(wavelength_units)
     I = integrate.quad(planckInt, lambda1, lambda2, args=(T_star, "m"))
     
     return np.pi**2 * throughput * integration_time / (h*c) * (R_star*getConversion(R_star_units) * D_telescope / (2*distance*getConversion(distance_units)))**2 * I[0]
 
+v_NPhotons = np.vectorize(NPhotons)
+v_NPhotons.__doc__ = "Vectorized version of the function NPhotons."
+
 
 # Noise estimate
-def noiseEstimate(T_star:float, lambda1:float, lambda2:float, throughput:float, 
+def noiseEstimate(T_star:float, wavelengths:tuple[float], throughput:float, 
                       integration_time:float, R_star:float, D_telescope:float, distance:float=20,
                       wavelength_units="um", R_star_units:str="R_sun", distance_units="pc")->float:
     """Returns the precision (i.e., noise) estimate of a particular telescope system when observing a particular object. 
 
     Args:
         T_star (float): Stellar temperature, in K.
-        lambda1 (float): Lower bound wavelength (i.e., minimum wavelength that system observes).
-        lambda2 (float): Upper bound wavelength (i.e., maximum wavelength that system observes).
+        wavelengths (tuple[float]): Lower and upper wavelength bounds (i.e., minimum and maxiomum wavelengths that system observes).
         throughput (float): System throughput (i.e., number of electrons out per photon in).
         integration_time (float): Total observation time, in s.
         R_star (float): Stellar radius, in units given by R_star_units.
@@ -226,19 +243,21 @@ def noiseEstimate(T_star:float, lambda1:float, lambda2:float, throughput:float,
     Returns:
         float: Noise estimate given the telescope, stellar, and planetary parameters.
     """
-    return np.sqrt(2 / NPhotons(T_star, lambda1, lambda2, throughput, integration_time, R_star, D_telescope, distance, wavelength_units, R_star_units, distance_units))
+    return np.sqrt(2 / NPhotons(T_star, wavelengths, throughput, integration_time, R_star, D_telescope, distance, wavelength_units, R_star_units, distance_units))
+
+v_noiseEstimate = np.vectorize(noiseEstimate)
+v_noiseEstimate.__doc__ = "Vectorized version of the function noiseEstimate."
 
 
 # ESM estimate
-def ESM(lambda1:float, lambda2:float, throughput:float, 
+def ESM(wavelengths:tuple[float], throughput:float, 
         integration_time:float,Rp:float, R_star:float, D_telescope:float, 
-        tday:float, teff:float, wavelength:float=7.5, distance:float=20,
+        tday:float, teff:float, distance:float=20,
         wavelength_units:str="um", Rp_units:str="R_jup", R_star_units:str="R_sun", distance_units:str="pc")->float:
     """Returns the ESM based on the input parameters.
 
     Args:
-        lambda1 (float): Lower bound wavelength (i.e., minimum wavelength that system observes).
-        lambda2 (float): Upper bound wavelength (i.e., maximum wavelength that system observes).
+        wavelengths (tuple[float]): Lower and upper wavelength bounds (i.e., minimum and maxiomum wavelengths that system observes).
         throughput (float): System throughput (i.e., number of electrons out per photon in).
         integration_time (float): Total observation time, in s.
         Rp (float): Planet radiy, in units given by Rp_units.
@@ -246,7 +265,6 @@ def ESM(lambda1:float, lambda2:float, throughput:float,
         D_telescope (float): Diameter of telescope, in m.
         tday (float): Planet's dayside emitting temperature, in K.
         teff (float): Stellar effective temperature, in K.
-        wavelength (float, optional): Representative wavelength. Defaults to 7.5.
         distance (float, optional): Distance to target. Defaults to 20pc (or whatever units provided by distance_units).
         wavelength_units (str, optional): Units for wavelength. Defaults to "um".
         Rp_units (str, optional): Planet radius units. Defaults to Jupiter radii, "R_jup".
@@ -257,9 +275,49 @@ def ESM(lambda1:float, lambda2:float, throughput:float,
         float: Estimated ESM
     """
     
-    signal = eclipseFlux(Rp, R_star, wavelength, tday, teff, Rp_units, R_star_units, wavelength_units)
-    noise = noiseEstimate(teff, lambda1, lambda2, throughput, 
+    signal = eclipseFlux(Rp, R_star, wavelengths, tday, teff, Rp_units, R_star_units, wavelength_units)
+    noise = noiseEstimate(teff, wavelengths, throughput, 
                               integration_time, R_star, D_telescope, distance, 
                               wavelength_units, R_star_units, distance_units)
     
     return signal / noise
+
+v_ESM = np.vectorize(ESM)
+v_ESM.__doc__ = "Vectorized version of the function ESM."
+
+
+# TSM estimate
+def TSM(wavelengths:tuple[float], T_star:float, throughput:float, Rp:float, R_star:float, Mp:float, T:float, mu:float, integration_time:float,
+        D_telescope:float, Nh:float=4, Rp_units:str="R_jup", R_star_units:str="R_sun", Mp_units:str="M_jup", 
+        distance:float=20, wavelength_units="um", distance_units="pc")->float:
+    """_summary_
+
+    Args:
+        wavelengths (tuple[float]): Lower and upper wavelength bounds (i.e., minimum and maxiomum wavelengths that system observes).
+        T_star (float): _description_
+        throughput (float): _description_
+        Rp (float): _description_
+        R_star (float): _description_
+        Mp (float): _description_
+        T (float): _description_
+        mu (float): _description_
+        integration_time (float): _description_
+        D_telescope (float): _description_
+        Nh (float, optional): _description_. Defaults to 4.
+        Rp_units (str, optional): _description_. Defaults to "R_jup".
+        R_star_units (str, optional): _description_. Defaults to "R_sun".
+        Mp_units (str, optional): _description_. Defaults to "M_jup".
+        distance (float, optional): _description_. Defaults to 20.
+        wavelength_units (str, optional): _description_. Defaults to "um".
+        distance_units (str, optional): _description_. Defaults to "pc".
+
+    Returns:
+        float: _description_
+    """
+    
+    signal = transitFlux(Rp, R_star, Mp, T, mu, Nh, Rp_units, R_star_units, Mp_units)
+    noise = noiseEstimate(T_star, wavelengths, throughput, integration_time, R_star, D_telescope, distance, wavelength_units, R_star_units, distance_units)
+    return signal / noise
+
+v_TSM = np.vectorize(TSM)
+v_TSM.__doc__ = "Vectorized version of the function TSM."

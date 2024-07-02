@@ -4,31 +4,77 @@ from matplotlib.transforms import Bbox
 import seaborn as sns
 from Functions import *
 from Telescope import *
+from numba import jit, prange
 
+# target list directory
+target_lists = os.path.join(cur_dir, "target_lists")
+telescopes = os.path.join(cur_dir, "Telescopes")
+
+### Opening telescopes for Ariel ###
+def openArielInstruments(show:bool=True):
+    return openInstruments(telescope="Ariel", show=show)
+
+print("________________________________________________________________\n"+
+      "Opening all instruments into dictionary object 'instruments'...\n")
+instruments = openArielInstruments(show=True)
+    
+## Choosing target list ##
+def setTargetList(target_list:str):
+    input("Choose target list: ", target_list)
+
+def getTargetList():
+    return target_list
 
 # data retrieval
-def getInstrument(instrument_name:str, make_table=False, target_list=None):
-    telescope = getTelescope("Ariel " + instrument_name)
-    if make_table:
-        if target_list is None:
-            raise ValueError("Be sure to inclide desired target_list if wanting to construct the table (i.e., if make_table=True)")
-        else:
-            telescope.target_list = target_list
-            telescope.constructTable()
+def getInstrument(instrument_name:str, make_table=False, target_list_name=target_list_name):
+    
+    # try:
+    keys = instruments["Ariel"][target_list_name].keys()
+    
+    normalized_instrument_name = normalize_name(instrument_name)
+
+    telescope = ''
+    for instrument in keys:
+        normalized_telescope_name = normalize_name(instrument)
+
+        is_in = all(word in normalized_telescope_name for word in normalized_instrument_name)
+        # is_in = check_all(normalized_telescope_name, normalized_instrument_name)
+                
+        if is_in:
+            if telescope != '':
+                raise ValueError(f"Cannot find desired instrument. Note that this error is raised if the name is degenerate, in which case consider being more specific. The available instruments are in the following sorted list.\n\n {sorted(keys, key=str.lower)}")
+            telescope = instruments["Ariel"][target_list_name][instrument]
+            
+    if telescope == '':
+        raise ValueError(f"No matching instrument found with '{instrument_name}'. Check spelling and the following sorted list of included instruments.\n\n {sorted(keys, key=str.lower)}")
+        
+        
+        
+        
+    # except:
+    # telescope = getTelescope("Ariel " + instrument_name)
+    # if make_table:
+    #     if target_list is None:
+    #         raise ValueError("Be sure to inclide desired target_list if wanting to construct the table (i.e., if make_table=True)")
+    #     else:
+    #         telescope.target_list = target_list
+    #         telescope.constructTable()
+                
     return telescope
 
 
-def __checkInstrument(instrument:str)->Telescope:
+def checkInstrument(instrument:str)->Telescope:
     if type(instrument) == str:
-        instrument = getInstrument(instrument)
+        return getInstrument(instrument)
     elif type(instrument) != Telescope:
         raise ValueError("instruments must be a list of strings or Telescope objects")
     
-    return instrument
+    # implicit elif type(instrument) == Telescope
+    return instrument # returning the instrument as Telescope object
 
 
 # plotting fill space for instrument sensitivity range
-def plotSensitivityRange(instruments:list[str]=["VISPhot", "FGS1", "FGS2", "NIRSpec R=10", "AIRS-CH0 R=30", "AIRS-CH1 R=30"], 
+def plotSensitivityRange(instruments:dict=["VISPhot", "FGS1", "FGS2", "NIRSpec R=10", "AIRS-CH0 R=30", "AIRS-CH1 R=30"], 
                          ax:plt.Axes=None, cmap=None, pad=10, label_on_plot=True):
     
     # check if ax is provided
@@ -46,7 +92,7 @@ def plotSensitivityRange(instruments:list[str]=["VISPhot", "FGS1", "FGS2", "NIRS
     for i, instrument in enumerate(instruments):
         
         # check if instruments are strings or Telescope objects
-        instrument = __checkInstrument(instrument)
+        instrument = checkInstrument(instrument)
     
         # plot the wavelength range of the instrument
         w1, w2 = instrument.wavelength_range
@@ -75,7 +121,7 @@ def plotSensitivityRange(instruments:list[str]=["VISPhot", "FGS1", "FGS2", "NIRS
         ax.axvspan(w1, w2, alpha=0.2, color=cmap[i], label=label)
         
 
-def __getTieredInstruments(tier:str):
+def getTieredInstruments(tier:str):
     """Return a list of instruments based on the given tier.
 
     Args:
@@ -93,24 +139,33 @@ def __getTieredInstruments(tier:str):
     elif tier.lower().replace(" ", "") in ['tier3', 'tieriii', 'tierthree']:
         return ["VISPhot", "FGS1", "FGS2", "NIRSpec R=20", "AIRS CH0 R=100", "AIRS CH1 R=30"], "Tier 3"
     
-
+# @jit(parallel=True)
 def __avgSNR(planet:str, tier:str, SNR_param:str, iterations:int)->float:
     # getting instruments based on the tier
-    instruments, _ = __getTieredInstruments(tier)
+    instruments, _ = getTieredInstruments(tier)
     paramSNRs = []
     
     # iterating through the instruments
-    for instrument in instruments:
+    # for instrument in instruments:
+    for i in prange(len(instruments)):
+        instrument = instruments[i]
         # average SNR only depends on NIRSpec, AIRS CH0, and AIRS CH1
-        if instrument not in ['VISPhot', 'FGS1', 'FGS2']:
-            instrument = __checkInstrument(instrument)
-            planetdf = getPlanet(instrument.getParam(SNR_param, iterations=iterations, names=True), planet) # get the planet data for one observation
-            snr_mean = planetdf.mean(numeric_only=True).tolist() # finding the mean SNR
-            paramSNRs.extend(snr_mean) # adding the mean SNR to the list
+        if SNR_param.lower() in ["esm", "tsm", "full phase curve snr"]:
+            if instrument not in ['VISPhot', 'FGS1', 'FGS2']:
+                instrument = checkInstrument(instrument)
+                planetdf = getPlanet(instrument.getParam(SNR_param, iterations=iterations, names=True), planet) # get the planet data for one observation
+                snr_mean = planetdf.mean(numeric_only=True).tolist() # finding the mean SNR
+                paramSNRs.extend(snr_mean) # adding the mean SNR to the list
+        else:
+            if instrument in ['VISPhot', 'FGS1', 'FGS2']:
+                instrument = checkInstrument(instrument)
+                planetdf = getPlanet(instrument.getParam(SNR_param, iterations=iterations, names=True), planet) # get the planet data for one observation
+                snr_mean = planetdf.mean(numeric_only=True).tolist() # finding the mean SNR
+                paramSNRs.extend(snr_mean) # adding the mean SNR to the list
             
     return sum(paramSNRs)/len(paramSNRs) # returning the average SNR
 
-
+# @jit(parallel=True)
 def findTierObservations(planet:str, tier:int, SNR_param:str, avg_SNR:float=7, observations:int=1)->tuple[int, float]:
     if type(tier) in [int, float]:
         tier = f'tier {tier}'
@@ -167,7 +222,7 @@ def plotParamProfile(planet:str, instruments:list[str], param:str, wavelength:fl
     # checl if tier is provided
     if type(instruments)==str:
         if 'tier' in instruments.lower().replace(" ", ""):
-            instruments, _ = __getTieredInstruments(instruments)
+            instruments, _ = getTieredInstruments(instruments)
         else:
             instruments = [instruments]
 
@@ -213,14 +268,14 @@ def templateProfile(planet:str, instruments:list[str], params:list[str], colors:
     tier = None
     if type(instruments)==str:
         if 'tier' in instruments.lower().replace(" ", ""):
-            instruments, tier = __getTieredInstruments(instruments)
+            instruments, tier = getTieredInstruments(instruments)
         else:
             instruments = [instruments]
         
     # setting title
     title = f"{planet} {main_title}"
     if tier is not None:
-        title += f"\nat {tier}"
+        title += f"\nat {tier} Spectral Resolution"
     # if iterations is not provided, set it to 1
     if iterations == 1:
         title += " with 1 Observation"
@@ -262,7 +317,7 @@ def templateProfile(planet:str, instruments:list[str], params:list[str], colors:
    
 
         
-def plotPrecisionProfile(planet:str, instruments:list[str]=["VISPhot", "FGS1", "FGS2", "NIRSpec R=10", "AIRS-CH0 R=30", "AIRS-CH1 R=30"], iterations:int=1,
+def plotPrecisionProfile(planet:str, instruments:list[str]='tier 1', iterations:int=1,
                          ax:plt.Axes=None, xscale='log', yscale='log',
                          params = ["Noise Estimate", "Eclipse Flux", "Transit Flux", "Reflected Light Flux"],
                          colors = ["blue", "red", "green", "orange"],
@@ -290,7 +345,7 @@ def plotPrecisionProfile(planet:str, instruments:list[str]=["VISPhot", "FGS1", "
     
 
 
-def plotSNRProfile(planet:str, instruments:list[str]=["VISPhot", "FGS1", "FGS2", "NIRSpec R=10", "AIRS-CH0 R=30", "AIRS-CH1 R=30"], iterations:int=1, 
+def plotSNRProfile(planet:str, instruments:list[str]='tier 1', iterations:int=1, 
                     params = ["ESM", "TSM", "RSM"],
                     colors = ["red", "green", "orange"],
                     markers = ['.', '.', '.'],

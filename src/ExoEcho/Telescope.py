@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 from astropy.time import Time
 import glob
 import os
-from Functions import *
-from numba import jit
-from numba.experimental import jitclass
+# from .Functions import *
+from Functions import * ## TO REMOVE BEFORE PUBLISHING
 
 ## Getting current directory
 cur_dir = os.path.dirname(os.path.realpath(__file__))
@@ -20,9 +19,12 @@ target_list_name = default_target_list_name
 default_target_list = pd.read_csv(cur_dir + f"/target_lists/{default_target_list_name}.csv")
 target_list = pd.read_csv(cur_dir + f"/target_lists/{target_list_name}.csv")
 
-def setTargetList(target_list:str=default_target_list_name):
+def setTargetList(targets_name:str=default_target_list_name):
     global target_list_name
-    target_list_name = target_list
+    global target_list
+    
+    target_list_name = targets_name
+    target_list = pd.read_csv(cur_dir + f"/target_lists/{target_list_name}.csv")
     
 def getTargetList():
     return target_list_name, target_list
@@ -284,6 +286,9 @@ class Telescope:
         
        
         arr = self.constructRanges() # getting wavelength ranges based on resolution
+        
+        # fixing Transit Duration
+        self.table.rename(columns={"Transit Duration [hr]": "Transit Duration [hrs]"}, inplace=True)
         replaceNanWithMean(self.table, "Transit Duration [hrs]") # replacing all NaN transit duration values with the mean value of the column
         
         self.__vCalculateParams__(arr)
@@ -650,8 +655,6 @@ def getPlanet(df:pd.DataFrame, planet:str, use_indexing:bool=False):
 
             # Efficiently filter by planet name
             planetdf = pd.DataFrame(df.loc[planet])
-
-
 
     except KeyError:
         raise KeyError("Provided dataframe does not contain a column named 'Planet Name'. Be sure to set the getParam (or getNoise, getESM, getEFlux, etc) method's argument 'names' to True.")

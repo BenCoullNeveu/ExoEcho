@@ -1,44 +1,498 @@
+.gitattributes
+.gitignore
 LICENSE
 README.md
 pyproject.toml
-src/ExoEcho/.gitignore
+src/ExoEcho/Analysis.ipynb
+src/ExoEcho/Ariel.py
+src/ExoEcho/Ariel_Target_Comparison_List.csv
+src/ExoEcho/Ariel_Target_List.csv
+src/ExoEcho/Billy_Edwards_Comparison.ipynb
 src/ExoEcho/EclipseSim.ipynb
+src/ExoEcho/EfficiencyTesting.ipynb
 src/ExoEcho/Functions.py
+src/ExoEcho/PlotPrecisionPlots.ipynb
+src/ExoEcho/Telescope.py
 src/ExoEcho/__init__.py
 src/ExoEcho/addTelescopes.ipynb
-src/ExoEcho/addTelescopes.py
+src/ExoEcho/plotSNRProfiles.ipynb
+src/ExoEcho/plotTieredProfiles.ipynb
+src/ExoEcho/test_exoecho.ipynb
 src/ExoEcho.egg-info/PKG-INFO
 src/ExoEcho.egg-info/SOURCES.txt
 src/ExoEcho.egg-info/dependency_links.txt
 src/ExoEcho.egg-info/requires.txt
 src/ExoEcho.egg-info/top_level.txt
-src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel AIRS-CH0, 1.95-3.9 microns, R=100).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel AIRS-CH1, 3.9-7.8 microns, R=100).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths Ariel NIRSpec, 1.1-1.95 microns, R=15).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRISS SOSS, 0.6-2.8 microns, R=700).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRSpec G395H, 0.6-5.3 microns, R=100).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates at Various Wavelengths JWST NIRSpec, 0.6-5.3 microns, R=100).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates for Various Ariel Instruments (R15 and R100).png
-src/ExoEcho/Noise Estimate Plots/Noise Estimates for Various Ariel Instruments (R15 and R30).png
+src/ExoEcho/Billy Edwards Comparisons/Cumulative_Time_vs_Targets.png
+src/ExoEcho/Billy Edwards Comparisons/ESM_TSM_Observations_SNR.png
+src/ExoEcho/Billy Edwards Comparisons/ESM_TSM_Observations_diff.png
+src/ExoEcho/Billy Edwards Comparisons/ESM_TSM_SNR.png
+src/ExoEcho/Billy Edwards Comparisons/ExoEcho_Edwards_Observation_Diff.png
+src/ExoEcho/Precision plots/WASP-103b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-105b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-124b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-130b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-136b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-139b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-141b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-147b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-150b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-15b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-169b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-170b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-174b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-176b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-177b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-178b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-22b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-25b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-33b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-37b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-46b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-53b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-60b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-61b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-62b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-70Ab Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-80b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-83b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-97b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Precision plots/WASP-99b Signal & Noise for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/Results Plots/Cumulative_Time_vs_Targets Tier 1.png
+src/ExoEcho/Results Plots/Cumulative_Time_vs_Targets all Tiers.png
+src/ExoEcho/Results Plots/Cumulative_Time_vs_Targets.png
+src/ExoEcho/Results Plots/Number of Phase Curve Obsevations for Each Target.png
+src/ExoEcho/Results Plots/num_obs_snr.png
+src/ExoEcho/Results Plots/num_obs_snr_LimitedMethods_Tier1.png
+src/ExoEcho/Results Plots/num_obs_snr_LimitedMethods_Tier2.png
+src/ExoEcho/Results Plots/num_obs_snr_LimitedMethods_Tier3.png
+src/ExoEcho/Results Plots/num_obs_snr_lowestObservations.png
+src/ExoEcho/SN curve plots/WASP-103b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-105b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-10b SNR for Ariel Instruments at Tier 2 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-10b SNR for Ariel Instruments at Tier 3 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-124b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-12b SNR for Ariel Instruments at Tier 2 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-12b SNR for Ariel Instruments at Tier 3 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-130b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-136b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-139b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-141b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-147b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-150b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-15b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-169b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-170b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-174b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-176b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-177b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-178b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-22b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-25b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-33b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-33b SNR for Ariel Instruments at Tier 2 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-33b SNR for Ariel Instruments at Tier 3 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-37b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-46b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-53b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-60b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-61b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-62b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-70Ab SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-80b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-83b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-97b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
+src/ExoEcho/SN curve plots/WASP-99b SNR for Ariel Instruments at Tier 1 Spectral Resolution with 1 Observation.png
 src/ExoEcho/TelescopeNoiseEstimates.egg-info/PKG-INFO
 src/ExoEcho/TelescopeNoiseEstimates.egg-info/SOURCES.txt
 src/ExoEcho/TelescopeNoiseEstimates.egg-info/dependency_links.txt
 src/ExoEcho/TelescopeNoiseEstimates.egg-info/requires.txt
 src/ExoEcho/TelescopeNoiseEstimates.egg-info/top_level.txt
-src/ExoEcho/Telescopes/Ariel AIRS-CH0 1.95-3.9um R=100.csv
-src/ExoEcho/Telescopes/Ariel AIRS-CH0 1.95-3.9um R=30.csv
-src/ExoEcho/Telescopes/Ariel AIRS-CH1 3.9-7.8um R=100.csv
-src/ExoEcho/Telescopes/Ariel AIRS-CH1 3.9-7.8um R=30.csv
-src/ExoEcho/Telescopes/Ariel FGS1 0.6-0.8um R=1.csv
-src/ExoEcho/Telescopes/Ariel FGS2 0.8-1.1um R=1.csv
-src/ExoEcho/Telescopes/Ariel NIRSpec 1.1-1.95um R=15.csv
-src/ExoEcho/Telescopes/Ariel VISPhot 0.5-0.6um R=1.csv
-src/ExoEcho/Telescopes/JWST MIRI LRS 5.0-12.0um R=100.csv
-src/ExoEcho/Telescopes/JWST MIRI MRS 4.9-28.8um R=1500.csv
-src/ExoEcho/Telescopes/JWST NIRISS SOSS 0.6-2.8um R=700.csv
-src/ExoEcho/Telescopes/JWST NIRSpec 0.6-5.3um R=100.csv
-src/ExoEcho/Telescopes/JWST NIRSpec 0.6-5.3um R=1000.csv
-src/ExoEcho/Telescopes/JWST NIRSpec 0.6-5.3um R=2700.csv
-src/ExoEcho/Telescopes/JWST NIRSpec G395H 0.6-5.3um R=100.csv
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=3 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=3 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=3 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=3 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=3 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=100 tau=0.27/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=100 tau=0.27/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=100 tau=0.27/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=100 tau=0.27/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=100 tau=0.27/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1000 tau=0.27/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1000 tau=0.27/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1000 tau=0.27/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1000 tau=0.27/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1000 tau=0.27/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Transit FLux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/ESM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Noise.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/RSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/TSM.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Target List.parquet
+src/ExoEcho/Telescopes/Ariel/Ariel_MCS_Known_2024-03-27/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Transit FLux.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/ESM.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Eclipse Flux.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Full Phase Curve Noise.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Full Phase Curve SNR.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Noise.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/RSM.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Reflected Light Flux.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/TSM.parquet
+src/ExoEcho/Telescopes/JWST/Ariel_MCS_Known_2024-03-27/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Transit FLux.parquet
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=100 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=3 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=30 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH0 1.95-3.9um D=1 R=50 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=1 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=10 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=100 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel AIRS CH1 3.9-7.8um D=1 R=30 tau=0.18/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS1 0.6-0.8um D=1 R=1 tau=0.17/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel FGS2 0.8-1.1um D=1 R=1 tau=0.25/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=10 tau=0.27/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=15 tau=0.27/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel NIRSpec 1.1-1.95um D=1 R=20 tau=0.27/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel VISPhot 0.5-0.6um D=1 R=1 tau=0.2/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/ESM.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Noise.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/RSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/TSM.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Target List.csv
+src/ExoEcho/Telescopes_superceded/Ariel_MCS_Known_2024-03-27/Ariel NIRSpec 1.1-1.95um D=1 R=1 tau=0.27/Transit FLux.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/ESM.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Eclipse Flux.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Full Phase Curve Noise.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Full Phase Curve SNR.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Noise.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/RSM.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Reflected Light Flux.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/TSM.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Target List.csv
+src/ExoEcho/Telescopes_superceded/JWST NIRSpec 0.6-5.3um R=100 0.6-5.3um D=6.5 R=100 tau=0.36/Transit FLux.csv
+src/ExoEcho/Tiered Precision Plots/HD189733b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/KELT-9b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/TOI-2338b Noise and Flux for Ariel at Different Tier Spectral Resolutions (5000 Occultations).png
+src/ExoEcho/Tiered Precision Plots/TOI-2338b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-103b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-105b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-10b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-124b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-12b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-130b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-136b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-139b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-141b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-147b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-150b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-15b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-169b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-170b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-174b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-176b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-177b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-178b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-189b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-22b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-25b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-33b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-37b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-46b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-53b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-60b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-61b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-62b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-70Ab Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-80b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-83b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-97b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/Tiered Precision Plots/WASP-99b Noise and Flux for Ariel at Different Tier Spectral Resolutions (Single Occultation).png
+src/ExoEcho/__pycache__/Ariel.cpython-311.pyc
+src/ExoEcho/__pycache__/Functions.cpython-311.pyc
+src/ExoEcho/__pycache__/Functions.cpython-39.pyc
+src/ExoEcho/__pycache__/Telescope.cpython-311.pyc
+src/ExoEcho/__pycache__/addTelescopes.cpython-311.pyc
 src/ExoEcho/target_lists/Ariel_MCS_Known_2024-03-27.csv
 src/ExoEcho/target_lists/Ariel_MCS_TPCs_2024-03-27.csv

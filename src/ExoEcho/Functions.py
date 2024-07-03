@@ -3,7 +3,6 @@ import pandas as pd
 from astropy import constants as const
 from astropy import units as u
 import scipy.integrate as integrate
-from numba import jit, float64
 
 #-----# CONSTANTS #-----#
 h = const.h.value # Planck constant

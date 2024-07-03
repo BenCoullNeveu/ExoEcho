@@ -2,13 +2,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 import seaborn as sns
-from Functions import *
-from Telescope import *
+# from .Functions import *
+# from .Telescope import *
 from numba import jit, prange
+import time
+
+from Functions import * # TO REMOVE BEFORE PUBLISHING
+from Telescope import * # TO REMOVE BEFORE PUBLISHING
 
 # target list directory
 target_lists = os.path.join(cur_dir, "target_lists")
 telescopes = os.path.join(cur_dir, "Telescopes")
+
+
 
 ### Opening telescopes for Ariel ###
 def openArielInstruments(show:bool=True):
@@ -17,16 +23,10 @@ def openArielInstruments(show:bool=True):
 print("________________________________________________________________\n"+
       "Opening all instruments into dictionary object 'instruments'...\n")
 instruments = openArielInstruments(show=True)
-    
-## Choosing target list ##
-def setTargetList(target_list:str):
-    input("Choose target list: ", target_list)
 
-def getTargetList():
-    return target_list
 
 # data retrieval
-def getInstrument(instrument_name:str, make_table=False, target_list_name=target_list_name):
+def getInstrument(instrument_name:str, target_list_name=getTargetList()[0]):
     
     # try:
     keys = instruments["Ariel"][target_list_name].keys()
@@ -65,7 +65,7 @@ def getInstrument(instrument_name:str, make_table=False, target_list_name=target
 
 def checkInstrument(instrument:str)->Telescope:
     if type(instrument) == str:
-        return getInstrument(instrument)
+        return getInstrument(instrument, getTargetList()[0])
     elif type(instrument) != Telescope:
         raise ValueError("instruments must be a list of strings or Telescope objects")
     
@@ -166,12 +166,12 @@ def __avgSNR(planet:str, tier:str, SNR_param:str, iterations:int)->float:
     return sum(paramSNRs)/len(paramSNRs) # returning the average SNR
 
 # @jit(parallel=True)
-def findTierObservations(planet:str, tier:int, SNR_param:str, avg_SNR:float=7, observations:int=1)->tuple[int, float]:
+def findTierObservations(planet:str, tier:int, SNR_param:str, avg_SNR:float=7)->tuple[int, float]:
     if type(tier) in [int, float]:
         tier = f'tier {tier}'
             
     # finding the average SNR for the given tier for a single observation
-    single_obs_SNR = __avgSNR(planet, tier, SNR_param, iterations=observations)
+    single_obs_SNR = __avgSNR(planet, tier, SNR_param, iterations=1)
     
     # finding the number of observations required to get SNR>=avg_SNR
     observations = np.ceil((avg_SNR / single_obs_SNR)**2)
@@ -186,7 +186,65 @@ def findTierObservations(planet:str, tier:int, SNR_param:str, avg_SNR:float=7, o
         finalSNR = __avgSNR(planet, tier, SNR_param, observations)
         
     return observations, finalSNR
+
+
+# constructing the observation table
+def constructObservationTable(target_list_name:str=target_list_name, show:bool=False):
+    
+    setTargetList(target_list_name)
+    _, target_list = getTargetList()
+    
+    if show:
+        start_time = time.time()
+        
+    for i in range(1,4):
+        
+        if show:
+            tier_time_start = time.time()
+            print(f"starting tier {i}")
+        
+        for param in ["ESM", "TSM", "RSM", "Full Phase Curve SNR"]:
             
+            if show:
+                snr_time_start = time.time()
+                print(f"---- starting {param}", end=" ")
+                
+            if param == "Full Phase Curve SNR":
+                avg_SNR = 10
+            else:
+                avg_SNR = 7
+            target_list[[f"Tier {i} Observations {param}", f"Tier {i} SNR {param}"]]  = target_list.apply(lambda x: pd.Series(findTierObservations(x["Planet Name"], 
+                                                                                                                i, 
+                                                                                                                param, 
+                                                                                                                avg_SNR)),
+                                                                            axis=1)
+            
+            if show:
+                snr_time_end = time.time()
+                print(f" -- {snr_time_end - snr_time_start:.2f} seconds --")
+        
+        if show:
+            tier_time_end = time.time()
+            print(f"     ---> tier {i} took {tier_time_end - tier_time_start:.2f} seconds", end="\n\n")
+
+    # saving target list
+    ariel_observation_path = setPath(cur_dir + f'/Ariel Observations/{target_list_name}')
+    target_list.to_parquet(f"{ariel_observation_path}_ObservationTable.parquet", index=False)
+    
+    if show:
+        end_time = time.time()
+        print(f"\n-> total time: {end_time - start_time:.2f} seconds", end="\n\n")
+        
+        
+# get the observation table
+def getObservationTable(target_list_name:str=target_list_name):
+    ariel_observation_path =  f'{cur_dir}/Ariel Observations/{target_list_name}'
+    
+    if not os.path.exists(ariel_observation_path):
+        raise ValueError(f"Observation table for {target_list_name} does not exist. Construct the table first.")
+    
+    return pd.read_parquet(f"{ariel_observation_path}_ObservationTable.parquet")
+
 
 
 # plotting the parameter profile of the instrument(s) provided

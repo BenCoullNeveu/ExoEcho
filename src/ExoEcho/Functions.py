@@ -320,3 +320,27 @@ def TSM(wavelengths:tuple[float], T_star:float, throughput:float, Rp:float, R_st
 
 v_TSM = np.vectorize(TSM)
 v_TSM.__doc__ = "Vectorized version of the function TSM."
+
+
+# direct star SNR. Useful for brown dwarfs
+def stellarSNR(T_star:float, wavelengths:tuple[float], throughput:float, 
+                integration_time:float, R_star:float, D_telescope:float, distance:float=20,
+                wavelength_units="um", R_star_units:str="R_sun", distance_units="pc")->float:
+    """_summary_
+
+    Args:
+        T_star (float): _description_
+        wavelengths (tuple[float]): _description_
+        throughput (float): _description_
+        integration_time (float): _description_
+        R_star (float): _description_
+        D_telescope (float): _description_
+        distance (float, optional): _description_. Defaults to 20.
+        wavelength_units (str, optional): _description_. Defaults to "um".
+        R_star_units (str, optional): _description_. Defaults to "R_sun".
+        distance_units (str, optional): _description_. Defaults to "pc".
+
+    Returns:
+        float: _description_
+    """
+    return np.sqrt(NPhotons(T_star, wavelengths, throughput, integration_time, R_star, D_telescope, distance, wavelength_units, R_star_units, distance_units))

@@ -238,12 +238,12 @@ def constructObservationTable(target_list_name:str=target_list_name, show:bool=F
         
 # get the observation table
 def getObservationTable(target_list_name:str=target_list_name):
-    ariel_observation_path =  f'{cur_dir}/Ariel Observations/{target_list_name}'
+    ariel_observation_path =  f'{cur_dir}/Ariel Observations/{target_list_name}_ObservationTable.parquet'
     
     if not os.path.exists(ariel_observation_path):
         raise ValueError(f"Observation table for {target_list_name} does not exist. Construct the table first.")
     
-    return pd.read_parquet(f"{ariel_observation_path}_ObservationTable.parquet")
+    return pd.read_parquet(f"{ariel_observation_path}")
 
 
 

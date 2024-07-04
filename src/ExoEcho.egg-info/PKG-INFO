@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: ExoEcho
-Version: 0.1.1
+Version: 0.1.4
 Summary: To estimate the noise of various telescopes conducting exoplanet-related observations.
 Author-email: Ben Coull-Neveu <benjamin.coull-neveu@mail.mcgill.ca>
 License: Copyright (c) 2024, Ben Coull-Neveu

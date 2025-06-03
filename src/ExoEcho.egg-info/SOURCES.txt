@@ -8,7 +8,7 @@ src/ExoEcho/Ariel.py
 src/ExoEcho/Ariel_Target_Comparison_List.csv
 src/ExoEcho/Ariel_Target_List.csv
 src/ExoEcho/Billy_Edwards_Comparison.ipynb
-src/ExoEcho/EclipseSim.ipynb
+src/ExoEcho/ConversionUI.py
 src/ExoEcho/EfficiencyTesting.ipynb
 src/ExoEcho/Functions.py
 src/ExoEcho/PlotPrecisionPlots.ipynb

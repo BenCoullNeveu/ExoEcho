@@ -4,32 +4,90 @@ from matplotlib.transforms import Bbox
 import seaborn as sns
 # from .Functions import *
 # from .Telescope import *
+from Functions import *
+from Telescope import *
+from RuntimeAnimation import animated_coffee
+
 from numba import jit, prange
 import time
 
-from Functions import * # TO REMOVE BEFORE PUBLISHING
-from Telescope import * # TO REMOVE BEFORE PUBLISHING
+from warnings import simplefilter
+simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 # target list directory
 target_lists = os.path.join(cur_dir, "target_lists")
 telescopes = os.path.join(cur_dir, "Telescopes")
 
+# working directory
+work_dir = os.getcwd()
+
+
+# getting target list
+target_list_name = "Ariel_MCS_Known_2024-03-27"
+target_list = pd.read_csv(f"{target_lists}/{target_list_name}.csv")
 
 
 ### Opening telescopes for Ariel ###
-def openArielInstruments(show:bool=True):
-    return openInstruments(telescope="Ariel", show=show)
-
+def openArielInstruments(target_list_name=None, show:bool=True):
+    global instruments
+    targets = target_list_name
+    if target_list_changed:
+        targets = getTargetList()[0]
+    
+    instruments = openInstruments(telescope="Ariel", target_list=targets, show=show)
+    
 print("________________________________________________________________\n"+
       "Opening all instruments into dictionary object 'instruments'...\n")
-instruments = openArielInstruments(show=True)
+
+# getting the instruments dictionary
+instruments = {}
+openArielInstruments()
+
+
+# construct ariel instruments with custom target list
+# @animated_coffee
+def constructArielInstruments(target_list_name:str=target_list_name, target_list=None):
+    if target_list is None:
+        target_list = pd.read_csv(f"{target_lists}/{target_list_name}.csv")
+        
+    ## TIER 1 ##
+    Telescope("Ariel NIRSpec", 1, (1.10, 1.95), 1, 0.27, target_list, target_list_name).constructTable()
+    Telescope("Ariel AIRS CH0", 1, (1.95, 3.9), 3, 0.18, target_list, target_list_name).constructTable()
+    Telescope("Ariel AIRS CH1", 1, (3.9, 7.8), 1, 0.18, target_list, target_list_name).constructTable()
+
+
+    ## TIER 2 ##
+    Telescope("Ariel NIRSpec", 1, (1.10, 1.95), 10, 0.27, target_list, target_list_name).constructTable()
+    Telescope("Ariel AIRS CH0", 1, (1.95, 3.9), 50, 0.18, target_list, target_list_name).constructTable()
+    Telescope("Ariel AIRS CH1", 1, (3.9, 7.8), 10, 0.18, target_list, target_list_name).constructTable()
+
+
+    ## TIER 3 ##
+    Telescope("Ariel NIRSpec", 1, (1.10, 1.95), 20, 0.27, target_list, target_list_name).constructTable()
+    Telescope("Ariel AIRS CH0", 1, (1.95, 3.9), 100, 0.18, target_list, target_list_name).constructTable()
+    Telescope("Ariel AIRS CH1", 1, (3.9, 7.8), 30, 0.18, target_list, target_list_name).constructTable()
+
+    ## Photometric instruments ##
+    Telescope("Ariel FGS1", 1, (0.6, .8), 1, 0.17, target_list, target_list_name).constructTable()
+    Telescope("Ariel FGS2", 1, (0.8, 1.10), 1, 0.25, target_list, target_list_name).constructTable()
+    Telescope("Ariel VISPhot", 1, (0.5, .6), 1, 0.2, target_list, target_list_name).constructTable()
+    
+    setTargetList(target_list_name)
+    openArielInstruments(show=False)
+    print("Successfully updated the Ariel.instruments dictionary with the newly constructed Ariel instruments.")
+
 
 
 # data retrieval
-def getInstrument(instrument_name:str, target_list_name=getTargetList()[0]):
+def getInstrument(instrument_name:str, target_list_name=target_list_name):
+    try: 
+        instruments["Ariel"][target_list_name]
+    except:
+        setTargetList(target_list_name)
+        openArielInstruments(show=False)
     
-    # try:
     keys = instruments["Ariel"][target_list_name].keys()
+    
     
     normalized_instrument_name = normalize_name(instrument_name)
 
@@ -65,7 +123,7 @@ def getInstrument(instrument_name:str, target_list_name=getTargetList()[0]):
 
 def checkInstrument(instrument:str)->Telescope:
     if type(instrument) == str:
-        return getInstrument(instrument, getTargetList()[0])
+        return getInstrument(instrument, target_list_name)
     elif type(instrument) != Telescope:
         raise ValueError("instruments must be a list of strings or Telescope objects")
     
@@ -74,7 +132,7 @@ def checkInstrument(instrument:str)->Telescope:
 
 
 # plotting fill space for instrument sensitivity range
-def plotSensitivityRange(instruments:dict=["VISPhot", "FGS1", "FGS2", "NIRSpec R=10", "AIRS-CH0 R=30", "AIRS-CH1 R=30"], 
+def plotSensitivityRange(instruments:dict=["VISPhot", "FGS1", "FGS2", "NIRSpec R=1", "AIRS CH0 R=3", "AIRS CH1 R=1"], 
                          ax:plt.Axes=None, cmap=None, pad=10, label_on_plot=True):
     
     # check if ax is provided
@@ -130,6 +188,10 @@ def getTieredInstruments(tier:str):
     Returns:
         list: A list of instruments corresponding to the given tier.
     """
+    
+    if type(tier) in [int, float]:
+        tier = f'tier {round(tier)}'
+    
     if tier.lower().replace(" ", "") in ['tier1', 'tieri', 'tierone']:
         return ["VISPhot", "FGS1", "FGS2", "NIRSpec R=1", "AIRS CH0 R=3", "AIRS CH1 R=1"], "Tier 1"
     
@@ -140,7 +202,7 @@ def getTieredInstruments(tier:str):
         return ["VISPhot", "FGS1", "FGS2", "NIRSpec R=20", "AIRS CH0 R=100", "AIRS CH1 R=30"], "Tier 3"
     
 # @jit(parallel=True)
-def __avgSNR(planet:str, tier:str, SNR_param:str, iterations:int)->float:
+def __avgSNR(planet:str, tier:str, SNR_param:str, iterations:int):
     # getting instruments based on the tier
     instruments, _ = getTieredInstruments(tier)
     paramSNRs = []
@@ -156,14 +218,41 @@ def __avgSNR(planet:str, tier:str, SNR_param:str, iterations:int)->float:
                 planetdf = getPlanet(instrument.getParam(SNR_param, iterations=iterations, names=True), planet) # get the planet data for one observation
                 snr_mean = planetdf.mean(numeric_only=True).tolist() # finding the mean SNR
                 paramSNRs.extend(snr_mean) # adding the mean SNR to the list
+                
         else:
             if instrument in ['VISPhot', 'FGS1', 'FGS2']:
                 instrument = checkInstrument(instrument)
                 planetdf = getPlanet(instrument.getParam(SNR_param, iterations=iterations, names=True), planet) # get the planet data for one observation
                 snr_mean = planetdf.mean(numeric_only=True).tolist() # finding the mean SNR
                 paramSNRs.extend(snr_mean) # adding the mean SNR to the list
-            
+    
     return sum(paramSNRs)/len(paramSNRs) # returning the average SNR
+
+def __avgFlux(planet:str, flux_param:str)->float:
+    # getting instruments based on the tier
+    instruments, _ = getTieredInstruments('tier 1')
+    paramFluxes = []
+    
+    # iterating through the instruments
+    # for instrument in instruments:
+    for i in prange(len(instruments)):
+        instrument = instruments[i]
+        # average SNR only depends on NIRSpec, AIRS CH0, and AIRS CH1
+        if flux_param in ["Eclipse Flux Ratio", "Transit Flux Ratio"]:
+            if instrument not in ['VISPhot', 'FGS1', 'FGS2']:
+                instrument = checkInstrument(instrument)
+                planetdf = getPlanet(instrument.getParam(flux_param, names=True), planet)
+                flux_mean = planetdf.mean(numeric_only=True).tolist()
+                paramFluxes.extend(flux_mean)
+        else:
+            if instrument in ['VISPhot', 'FGS1', 'FGS2']:
+                instrument = checkInstrument(instrument)
+                planetdf = getPlanet(instrument.getParam(flux_param, names=True), planet)
+                flux_mean = planetdf.mean(numeric_only=True).tolist()
+                paramFluxes.extend(flux_mean)
+        
+    return sum(paramFluxes)/len(paramFluxes)
+                
 
 # @jit(parallel=True)
 def findTierObservations(planet:str, tier:int, SNR_param:str, avg_SNR:float=7)->tuple[int, float]:
@@ -188,36 +277,167 @@ def findTierObservations(planet:str, tier:int, SNR_param:str, avg_SNR:float=7)->
     return observations, finalSNR
 
 
-# constructing the observation table
-def constructObservationTable(target_list_name:str=target_list_name, show:bool=False):
+def __avgTdayunc(planet:str, tier:str)->float:
+    # getting instruments based on the tier
+    instruments, _ = getTieredInstruments(tier)
+    weights = []
     
-    setTargetList(target_list_name)
-    _, target_list = getTargetList()
+    # iterating through the instruments
+    # for instrument in instruments:
+    for i in prange(len(instruments)):
+        instrument = instruments[i]
+        # average SNR only depends on NIRSpec, AIRS CH0, and AIRS CH1
+        if instrument not in ['VISPhot', 'FGS1', 'FGS2']:
+            instrument = checkInstrument(instrument)
+            planetdf = getPlanet(instrument.getParam("Eclipse Dayside Temperature Uncertainty", names=True), planet) # get the planet data for one observation
+            
+            weights_df = planetdf.applymap(lambda x: 1/x**2 if isinstance(x, (int, float)) and pd.notnull(x) else 0)
+            
+            weighted_sum = weights_df.sum(axis=1)
+            weights.append(weighted_sum)
+            
+    return np.sqrt(1/sum(weights)) if weights else None
+
+def __avgAGunc(planet:str, tier:str)->float:
+    # getting instruments based on the tier
+    instruments, _ = getTieredInstruments(tier)
+    weights = []
+    
+    # iterating through the instruments
+    # for instrument in instruments:
+    for i in prange(len(instruments)):
+        instrument = instruments[i]
+        # average SNR only depends on NIRSpec, AIRS CH0, and AIRS CH1
+        if instrument in ['VISPhot', 'FGS1', 'FGS2']:
+            instrument = checkInstrument(instrument)
+            planetdf = getPlanet(instrument.getParam("Geometric Albedo Uncertainty", names=True), planet) # get the planet data for one observation
+            
+            weights_df = planetdf.applymap(lambda x: 1/x**2 if isinstance(x, (int, float)) and pd.notnull(x) else 0)
+            
+            weighted_sum = weights_df.sum(axis=1)
+            weights.append(weighted_sum)
+            
+    return np.sqrt(1/sum(weights)) if weights else None
+
+# def EWMean(planet:str, tier:str, SNR_param:str, flux_param:str, iterations:int):
+#     instruments, _ = getTieredInstruments(tier)
+    
+#     for i in prange(len(instruments)):
+#         inst = instruments[i]
+#         if SNR_param.lower() in ["esm", "tsm", "full phase curve snr"]:
+#             if inst not in ['VISPhot', 'FGS1', 'FGS2']:
+#                 inst = checkInstrument(inst)
+                
+#                 SNRdf = inst.getParam(SNR_param, iterations=iterations, names=False)
+#                 FLUXdf = inst.getParam(flux_param, names=False)
+                
+#                 precision_df = FLUXdf / SNRdf
+                
+#                 precision_df.applymap(lambda x: 1/x**2 if isinstance(x, (int, float)) and pd.notnull(x) else 0).sum(axis=1)
+                
+                
+                
+#                 planetdf = getPlanet(inst.getParam(SNR_param, iterations=iterations, names=True), planet)
+#                 snr_mean = planetdf.mean(numeric_only=True).tolist()
+    
+#     # EWM precision
+#     ewm_precision = np.sqrt(planetdf.applymap(lambda x: 1/x**2 if isinstance(x, (int, float)) and pd.notnull(x) else 0).sum(axis=1)
+
+# def EclipsePrecisionEWM(tier:str):
+#     instruments, _ = getTieredInstruments(tier)
+#     precision = []
+    
+#     param_df = pd.DataFrame()
+#     for i in prange(len(instruments)):
+#         instrument = instruments[i]
+#         if instrument not in ['VISPhot', 'FGS1', 'FGS2']:
+#             instrument = checkInstrument(instrument)
+#             param_df = pd.concat([param_df, instrument.getParam("Eclipse SNR", iterations=1, names=False)], axis=1)
+            
+#     precision = list((1/instrument.getParam("Eclipse SNR", iterations=1, names=False)**2).values)
+            
+#     for i in range(len(precision)):
+#         precision[i] = np.sqrt(1/precision[i].sum())
+    
+#     return precision
+
+# def EclipseMappingPrecisionEWM(tier:str):
+#     instruments, _ = getTieredInstruments(tier)
+#     precision = []
+    
+#     param_df = pd.DataFrame()
+#     for i in prange(len(instruments)):
+#         instrument = instruments[i]
+#         if instrument not in ['VISPhot', 'FGS1', 'FGS2']:
+#             instrument = checkInstrument(instrument)
+#             param_df = pd.concat([param_df, instrument.getParam("Eclipse Mapping SNR", iterations=1, names=False)], axis=1)
+            
+#     precision = list((1/instrument.getParam("Eclipse Mapping SNR", iterations=1, names=False)**2).values)
+                
+#     for i in range(len(precision)):
+#         precision[i] = np.sqrt(1/precision[i].sum())
+    
+#     return precision    
+
+# constructing the observation table
+# @animated_coffee
+def constructObservationTable(target_list_title:str=None, show:bool=False):
+    global target_list
+    global target_list_name
+    
+    if target_list_title is not None:
+        setTargetList(target_list_title)
+    
+    target_list_name, target_list = getTargetList()
     
     if show:
         start_time = time.time()
         
+    
+    def calculate_observations(row, tier, param, avg_SNR):
+        return pd.Series(findTierObservations(row["Planet Name"], tier, param, avg_SNR))
+    
+    # def calculate_avg_td_unc(row, ):
+    
+    for param in ["ESM", "TSM", "RSM"]: # Eclipse flux = PC flux
+        for i, row in target_list.iterrows():
+            target_list.loc[i, f"{param} Flux"] = __avgFlux(row["Planet Name"], param)
+        # target_list[f"{param} Flux"] = target_list.apply(
+        #             lambda x: __avgFlux(x["Planet Name"], param)
+        #         )
+    
+    target_list["Relative Dayside Temperature Uncertainty Average"] = __avgTdayunc(target_list["Planet Name"], 'tier 1')
+    target_list["Relative Geometric Albedo Uncertainty Average"] = __avgAGunc(target_list["Planet Name"], 'tier 1')
+    target_list["Relative Phase Function Uncertainty Average"] = target_list["Relative Geometric Albedo Uncertainty Average"]
+    
     for i in range(1,4):
         
         if show:
             tier_time_start = time.time()
             print(f"starting tier {i}")
+            
+        # target_list[f"Tier {i} Eclipse EWM Precision"] = EclipsePrecisionEWM(i)
+        # target_list[f"Tier {i} Eclipse Mapping EWM Precision"] = EclipseMappingPrecisionEWM(i)
         
         for param in ["ESM", "TSM", "RSM", "Full Phase Curve SNR"]:
+            if param == "RSM" and i > 1:
+                continue # Reflected light signal-to-noise ratio is not tier dependent
             
             if show:
                 snr_time_start = time.time()
                 print(f"---- starting {param}", end=" ")
                 
-            if param == "Full Phase Curve SNR":
-                avg_SNR = 10
-            else:
-                avg_SNR = 7
-            target_list[[f"Tier {i} Observations {param}", f"Tier {i} SNR {param}"]]  = target_list.apply(lambda x: pd.Series(findTierObservations(x["Planet Name"], 
-                                                                                                                i, 
-                                                                                                                param, 
-                                                                                                                avg_SNR)),
-                                                                            axis=1)
+            avg_SNR = 10 if param == "Full Phase Curve SNR" else 7
+                
+            if param != "RSM":
+                target_list[[f"Tier {i} Observations {param}", f"Tier {i} {param}"]] = target_list.apply(
+                    lambda row: calculate_observations(row, i, param, avg_SNR), axis=1
+                )
+            
+            else: # if param == RSM
+                target_list[[f"Observations RSM", f"RSM"]] = target_list.apply(
+                                lambda row: calculate_observations(row, i, param, avg_SNR), axis=1
+                            )
             
             if show:
                 snr_time_end = time.time()
@@ -226,6 +446,41 @@ def constructObservationTable(target_list_name:str=target_list_name, show:bool=F
         if show:
             tier_time_end = time.time()
             print(f"     ---> tier {i} took {tier_time_end - tier_time_start:.2f} seconds", end="\n\n")
+            
+            
+        if show:
+            param_start_time = time.time()
+            print(f"starting parameter uncertainty calculations, ")
+        
+        # finding uncertainties
+        # target_list[f"Geometric Albedo Uncertainty"] = target_list.apply(
+        #     lambda x: 1/x["RSM"], axis=1
+        # )
+        
+        # target_list[f"Phase Function Uncertainty"] = target_list[f"Geometric Albedo Uncertainty"]
+        
+        # average eclipse dayside temperature uncertainty
+        # target_list[f"Average Dayside Temperature Uncertainty * SNR"] = target_list.apply( 
+        #     lambda x: Tdayunc(((1.1, 7.8)), x["Dayside Emitting Temperature [K]"], x["Star Temperature [K]"], x["Star Radius [Rs]"], 
+        #                         x["Planet Radius [Rjup]"], x["ESM Flux"]), axis=1
+        # )
+        
+        # target_list[f"Average Eclipse Dayside Temperature Uncertainty"] = target_list.apply( 
+        #     lambda x: x["Average Dayside Temperature Uncertainty * SNR"] / x[f"Tier 1 ESM"], axis=1
+        # )
+        
+        # target_list[f"Average Full Phase Curve Dayside Temperature Uncertainty"] = target_list.apply( 
+        #     lambda x: x["Average Dayside Temperature Uncertainty * SNR"] / x[f"Tier 1 Full Phase Curve SNR"], axis=1
+        # )
+        
+        # target_list[f"Tier {i} Average Full Phase Curve Dayside Temperature Uncertainty"] = target_list.apply( 
+        #     lambda x: x["Average Dayside Temperature Uncertainty"] / x[f"Full Phase Curve SNR"], axis=1
+        # )
+            
+
+        # target_list[f"Tier {i} Dayside Temperature Uncertainty * Dayside Temperature"] = target_list.apply(
+        #     lambda x: , axis=1
+        # )
 
     # saving target list
     ariel_observation_path = setPath(cur_dir + f'/Ariel Observations/{target_list_name}')
@@ -243,13 +498,18 @@ def getObservationTable(target_list_name:str=target_list_name):
     if not os.path.exists(ariel_observation_path):
         raise ValueError(f"Observation table for {target_list_name} does not exist. Construct the table first.")
     
-    return pd.read_parquet(f"{ariel_observation_path}")
+    obs_table = pd.read_parquet(f"{ariel_observation_path}")
+    try:
+        obs_table = obs_table.loc[:, ~obs_table.columns.str.contains('^Unnamed')] # removing unnamed columns
+    except:
+        pass
+    return obs_table
 
 
 
 # plotting the parameter profile of the instrument(s) provided
-def plotParamProfile(planet:str, instruments:list[str], param:str, wavelength:float=None, iterations=1, ax:plt.Axes=None, label:str=None, 
-                     return_data:bool=False, **kwargs):
+def plotParamProfile(planet:str, instruments:list[str], param:str, wavelength:float=None, iterations=1, target_list_name=target_list_name, ax:plt.Axes=None, label:str=None, 
+                     return_data:bool=False, ppm:bool=None, factor:float=1.0, **kwargs):
     """
     Plot the parameter profile for a given planet and parameter using multiple instruments.
 
@@ -273,6 +533,7 @@ def plotParamProfile(planet:str, instruments:list[str], param:str, wavelength:fl
     # check if ax is provided
     if ax is None:
         _, ax = plt.subplots()
+    
         
     wavelengths = np.array([])
     param_data = np.array([])
@@ -287,12 +548,12 @@ def plotParamProfile(planet:str, instruments:list[str], param:str, wavelength:fl
     # check if instruments are strings or Telescope objects
     for i, instrument in enumerate(instruments):
         if type(instrument) == str:
-            instrument = getInstrument(instrument)
+            instrument = getInstrument(instrument, target_list_name)
         elif type(instrument) != Telescope:
             raise ValueError("instruments must be a list of strings or Telescope objects")
             
         # plot the parameter profile on Axes
-        w, p = instrument.plotParam(planet, param, wavelength, iterations=iterations, plot=False)
+        w, p = instrument.plotParam(planet, param, wavelength, iterations=iterations, plot=False, ppm=ppm, factor=factor)
         wavelengths = np.append(wavelengths, w)
         param_data = np.append(param_data, p)
         
@@ -336,10 +597,10 @@ def templateProfile(planet:str, instruments:list[str], params:list[str], colors:
         title += f"\nat {tier} Spectral Resolution"
     # if iterations is not provided, set it to 1
     if iterations == 1:
-        title += " with 1 Observation"
+        title += " with 1 Occultation"
     elif type(iterations) in [int, float] and iterations >= 1:
         iterations = int(iterations)
-        title += " with " + str(iterations) + " Occultation"
+        title += " with " + str(iterations) + " Occultations"
     else:
         raise ValueError("Iterations must be an integer greater than or equal to 1")
     ax.set_title(title, fontsize=14)
@@ -348,11 +609,11 @@ def templateProfile(planet:str, instruments:list[str], params:list[str], colors:
     trim_data = None
     for param, color, marker, linestyle, linewidth, alpha in zip(params, colors, markers, linestyles, linewidths, alphas):
         if param == trim_param:
-            trim_data = plotParamProfile(planet, instruments, param, iterations=iterations, ax=ax, color=color, 
+            trim_data = plotParamProfile(planet, instruments, param, iterations=iterations, ax=ax, color=color,
                                      linestyle=linestyle, linewidth=linewidth, marker=marker, alpha=alpha,
                                      return_data=True)
         else:
-            plotParamProfile(planet, instruments, param, iterations=iterations, ax=ax, color=color, 
+            plotParamProfile(planet, instruments, param, iterations=iterations, ax=ax, color=color,
                             linestyle=linestyle, linewidth=linewidth, marker=marker, alpha=alpha,
                             return_data=False)
     
@@ -386,6 +647,10 @@ def plotPrecisionProfile(planet:str, instruments:list[str]='tier 1', iterations:
                          show_legend:bool=True, legend_loc:str='best', label_range_on_plot:bool=True, default_save=False, 
                          trim_plot:bool=True, trim_param:str="Noise Estimate", trim_amount:float=10):   
     
+    return_ax = False
+    if ax is None:
+        return_ax = True
+    
     ax, title = templateProfile(planet, instruments, params, colors, markers, linestyles, linewidths, alphas, "Signal & Noise for Ariel Instruments", 
                               iterations, ax, xscale, yscale, label_range_on_plot=label_range_on_plot, 
                               trim_plot=trim_plot, trim_param=trim_param, trim_amount=trim_amount)
@@ -399,7 +664,12 @@ def plotPrecisionProfile(planet:str, instruments:list[str]='tier 1', iterations:
 
     # saving fig
     if default_save:
-        plt.savefig("Precision plots/" + title.replace("\n", " "), bbox_inches='tight', dpi=300)
+        path = setPath(work_dir + "/Precision plots")
+        plt.savefig(path + '/' + title.replace("\n", " "), bbox_inches='tight', dpi=300)
+        
+    if return_ax:
+        return ax
+    
     
 
 
@@ -414,6 +684,10 @@ def plotSNRProfile(planet:str, instruments:list[str]='tier 1', iterations:int=1,
                     default_save=False, plotSNR7:bool=True, label_range_on_plot:bool=True, 
                     trim_plot:bool=True, trim_param:str="Noise Estimate", trim_amount:float=10):
     
+    return_ax = False
+    if ax is None:
+        return_ax = True
+        
     # plotting SNR profiles
     ax, title = templateProfile(planet, instruments, params, colors, markers, linestyles, linewidths, alphas, "SNR for Ariel Instruments",
                                 iterations, ax, xscale, yscale, label_range_on_plot=label_range_on_plot,
@@ -432,8 +706,11 @@ def plotSNRProfile(planet:str, instruments:list[str]='tier 1', iterations:int=1,
 
     # saving fig
     if default_save:
-        plt.savefig("SN curve plots/" + title.replace("\n", " "), bbox_inches='tight', dpi=300)
-        
+        path = setPath(work_dir + "/SN curve plots")
+        plt.savefig(path + "/" + title.replace("\n", " "), bbox_inches='tight', dpi=300)
+    
+    if return_ax:
+        return ax
         
         
         
@@ -450,7 +727,9 @@ def plotTieredPrecisionProfile(planet:str, ax:plt.Axes=None, xscale:str='log', y
                                trim_plot:bool=True, trim_amount:float=10, observations:int=1):
     
     # check if ax is provided
+    return_ax = False
     if ax is None:
+        return_ax = True
         fig, ax = plt.subplots(figsize=(9,6))
     
     # setting x and y scales
@@ -500,4 +779,8 @@ def plotTieredPrecisionProfile(planet:str, ax:plt.Axes=None, xscale:str='log', y
 
     # saving fig
     if default_save:
-        plt.savefig("Tiered Precision Plots/" + title.replace("\n", " "), bbox_inches='tight', dpi=300)
+        path = setPath(work_dir + "/Tiered Precision Plots")
+        plt.savefig(path + "/" + title.replace("\n", " "), bbox_inches='tight', dpi=300)
+    
+    if return_ax:
+        return ax

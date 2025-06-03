@@ -97,6 +97,46 @@ v_Tday = np.vectorize(Tday)
 v_Tday.__doc__ = "Vectorized version of the function Tday."
 
 
+def Tdayunc(wavelength_range:tuple, Td, Ts, Rs, Rp, Flux, w_units='microns', Rs_units='Rs', Rp_units='Rj')->float: 
+    """Return the uncertainty on Tday*ESM. As such, to get Tday_unc, divide the result by ESM.
+    
+    Args:
+        wavelength_range (tuple): Wavelength range over which to integrate.
+        Td (float): Dayside temperature.
+        Ts (float): Stellar temperature.
+        Rs (float): Stellar radius.
+        Rp (float): Planetary radius.
+        Flux (float): Flux.
+        w_units (str, optional): Wavelength units. Defaults to 'microns'.
+        Rs_units (str, optional): Stellar radius units. Defaults to 'Rs'.
+        Rp_units (str, optional): Planetary radius units. Defaults to 'Rj'.
+        
+    Returns:
+        float: Uncertainty on Tday*ESM.
+        """
+        
+    w_con = getConversion(w_units)
+    Rs_con = getConversion(Rs_units)
+    Rp_con = getConversion(Rp_units)
+        
+    def integrand(wavelength):
+        return wavelength * (1 - (Rs*Rs_con)**2 / ((Rp*Rp_con)**2 * (np.exp(k_B * Ts * wavelength / (h * c)) - 1) / Flux + (Rs*Rs_con)**2)  )
+
+    def integrate_range(wavelength_range):
+        lower_bound, upper_bound = wavelength_range
+        lower_bound *= w_con
+        upper_bound *= w_con
+        
+        integral, _ = integrate.quad(integrand, lower_bound, upper_bound)
+        return integral / (upper_bound - lower_bound)  # Averaging over the range
+    
+    return Td * k_B / (h * c) * integrate_range(wavelength_range)
+
+v_Tdayunc = np.vectorize(Tdayunc)
+v_Tdayunc.__doc__ = "Vectorized version of the function Tdayunc."
+
+
+
 # thermal contrast ratio
 def eclipseFlux(Rp:float, R_star:float, wavelength:float, tday:float, teff:float, Rp_units:str="R_jup", R_star_units:str="R_sun", wavelength_units:str="um")->float:
     """Returns the thermal contrast ratio.

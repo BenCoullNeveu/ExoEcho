@@ -1,0 +1,2 @@
+Molecule,Expected Precision (Mean),Standard Deviation,Median Precision,Median Lower,Median Upper,Targets considered
+log,0.15123708419990928,0.22495289983774092,0.09313168157804075,0.09129536333388702,0.09585891041216245,1933.0
